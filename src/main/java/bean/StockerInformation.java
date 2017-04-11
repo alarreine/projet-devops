@@ -1,10 +1,12 @@
 package bean;
 
-import enumerate.TypeEviction;
-
 /**
  * Created by alarreine on 11/04/2017.
  */
+
+import enumerate.TypeEviction;
+
+
 public class StockerInformation {
 
     private String cle;
