@@ -20,4 +20,8 @@ public class ReponseInformation {
     public void setInformation(String information) {
         this.information = information;
     }
+    
+    public boolean exist(){
+    	return true;
+    }
 }
