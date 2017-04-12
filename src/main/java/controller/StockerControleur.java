@@ -4,7 +4,6 @@ package controller;
  * Created by alarreine on 11/04/2017.
  */
 
-import bean.ReponseInformation;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
