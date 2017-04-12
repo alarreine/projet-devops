@@ -7,21 +7,21 @@ package bean;
 import enumerate.TypeEviction;
 
 
-public class StockerInformation {
+public class Information {
 
     private String cle;
     private String information;
     private Integer ttl;
     private TypeEviction typeEviction;
 
-    public StockerInformation(String cle, String information, Integer ttl, TypeEviction typeEviction) {
+    public Information(String cle, String information, Integer ttl, TypeEviction typeEviction) {
         this.cle = cle;
         this.information = information;
         this.ttl = ttl;
         this.typeEviction = typeEviction;
     }
 
-    public StockerInformation() {
+    public Information() {
 
     }
 

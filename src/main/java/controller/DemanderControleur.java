@@ -13,9 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/get")
+/**
+ * ReponseInformation get(cle)
+ */
 public class DemanderControleur {
-
-
 
     @RequestMapping(method = RequestMethod.GET)
     public ReponseInformation obtenirInformationParCle(@RequestParam(value="id", defaultValue="0") String id) {
