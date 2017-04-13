@@ -8,11 +8,10 @@ import bean.Client;
 import bean.reponse.ReponseBasic;
 import bean.reponse.ReponseInformation;
 import bean.reponse.ReponseListClient;
+import controller.exception.KeyNotFoundException;
 import enumerate.StatusReponse;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 
 @RestController
@@ -20,13 +19,17 @@ public class DemanderControleur {
 
 
 
-    @RequestMapping(method = RequestMethod.GET, value = "/get")
-    public ReponseBasic getInformationByKey(@RequestParam(value="id", defaultValue="0") String key) {
+    @RequestMapping(method = RequestMethod.GET, value = "/key/{k}")
+    public ReponseBasic getInformationByKey(@PathVariable String k) {
 
         ReponseInformation reponseInformation = new ReponseInformation();
         reponseInformation.getInformation().add("ouiiii");
         reponseInformation.getInformation().add("ouiiiiiiiiii");
         reponseInformation.setStatus(StatusReponse.OK);
+        if(k=="3"){
+            throw new KeyNotFoundException(k);
+        }
+
         return reponseInformation;
     }
 
