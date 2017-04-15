@@ -1,4 +1,4 @@
-package bean;
+package bean.requete;
 
 /**
  * Created by alarreine on 11/04/2017.
@@ -7,38 +7,35 @@ package bean;
 import enumerate.TypeEviction;
 
 
-public class Information {
+public class RequeteSetInformation {
 
-    private String cle;
-    private String information;
+    private String key;
+    private String info;
     private Integer ttl;
     private TypeEviction typeEviction;
 
-    public Information(String cle, String information, Integer ttl, TypeEviction typeEviction) {
-        this.cle = cle;
-        this.information = information;
+    public RequeteSetInformation(String key, String info, Integer ttl, TypeEviction typeEviction) {
+
+        this.key = key;
+        this.info = info;
         this.ttl = ttl;
         this.typeEviction = typeEviction;
     }
 
-    public Information() {
-
+    public String getKey() {
+        return key;
     }
 
-    public String getCle() {
-        return cle;
+    public void setKey(String key) {
+        this.key = key;
     }
 
-    public void setCle(String cle) {
-        this.cle = cle;
+    public String getInfo() {
+        return info;
     }
 
-    public String getInformation() {
-        return information;
-    }
-
-    public void setInformation(String information) {
-        this.information = information;
+    public void setInfo(String info) {
+        this.info = info;
     }
 
     public Integer getTtl() {
@@ -56,4 +53,6 @@ public class Information {
     public void setTypeEviction(TypeEviction typeEviction) {
         this.typeEviction = typeEviction;
     }
+
+
 }
