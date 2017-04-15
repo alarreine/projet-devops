@@ -6,20 +6,36 @@ package bean.requete;
 
 import enumerate.TypeEviction;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class RequeteSetInformation {
 
     private String key;
-    private String info;
+    private List<String> info;
     private Integer ttl;
     private TypeEviction typeEviction;
 
-    public RequeteSetInformation(String key, String info, Integer ttl, TypeEviction typeEviction) {
-
+    public RequeteSetInformation(String key, List<String> info, Integer ttl, TypeEviction typeEviction) {
         this.key = key;
-        this.info = info;
+        this.info = new ArrayList<>();
         this.ttl = ttl;
         this.typeEviction = typeEviction;
+    }
+
+    public RequeteSetInformation() {
+
+        ttl=100;
+        typeEviction = TypeEviction.NOEVICTION;
+
+    }
+
+    public RequeteSetInformation(String key, List<String> info) {
+        this.key = key;
+        this.info = info;
+        ttl=100;
+        typeEviction = TypeEviction.NOEVICTION;
     }
 
     public String getKey() {
@@ -30,12 +46,16 @@ public class RequeteSetInformation {
         this.key = key;
     }
 
-    public String getInfo() {
+    public List<String> getListInfo() {
         return info;
     }
 
-    public void setInfo(String info) {
+    public void setListInfo(List<String> info) {
         this.info = info;
+    }
+
+    public void addToListInfo(String info) {
+        getListInfo().add(info);
     }
 
     public Integer getTtl() {
