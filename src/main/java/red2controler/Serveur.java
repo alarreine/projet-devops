@@ -1,7 +1,6 @@
 package red2controler;
 
 import bean.Client;
-
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
@@ -12,29 +11,71 @@ public class Serveur {
      * Chaque client a un HashMap où à une cle on associe une information
      */
     private HashMap<String, HashMap<String, String>> clientsConnectes;
+    private HashMap<String, String> bdMotDePasse;
 
     public Serveur() throws NoSuchAlgorithmException, UnsupportedEncodingException {
         clientsConnectes = new HashMap<String, HashMap<String, String>>();
+        bdMotDePasse = new HashMap<String, String>();
+        initialiserBDMotDePasse();
     }
+
+    public void initialiserBDMotDePasse(){
+        // Les adresses IP seront fournies par Agustin
+        bdMotDePasse.put("127.0.1.0","1234");
+        bdMotDePasse.put("127.0.0.0","AZERTY");
+    }
+
     /************************** Interface du serveur ********************************/
     /*
      * Authentifie le client courant
      * (côté serveur ça crée le hash de ce client)
      * @param client celui qui s'authentifie
      * @param password le mot de passe du client
-     * @return "OK" si c'est bon, "AUTHENTIFICATION IMPOSSIBLE" sinon
+     * @return "VOUS N'AVEZ PAS DE COMPTE, VEUILLEZ EN CREER UN" si le client n'a pas de compte
+     * AUTHENTIFICATION REUSSIE" si c'est le bon mdp, "MAUVAIS MOT DE PASSE" sinon
      */
     public String auth(Client client, String password){
-        return "";
+        String resultat = "";
+        if (bdMotDePasse.containsKey(client.getIp())){
+            if ((bdMotDePasse.get(client.getIp())).equals(password)){
+                resultat = "AUTHENTIFICATION REUSSIE";
+                if (!clientsConnectes.containsKey(client.getIp())){
+                    HashMap<String, String> hashClient = new HashMap<>();
+                    clientsConnectes.put(client.getIp(), hashClient);
+                }
+                else{
+                    resultat = "MAUVAIS MOT DE PASSE";
+                }
+            }
+        }
+        else{
+            resultat = "VOUS N'AVEZ PAS DE COMPTE, VEUILLEZ EN CREER UN";
+        }
+        return resultat;
     }
 
     /*
+     * Permet de renvoyer l'information associee à la cle donnee en argument si elle existe
      * @param client qui demande la valeur d'une cle
      * @param cle : cle pour obtenir l'information associee
-     * @return l'information associe à la cle si elle existe, "AUCUNE INFO POUR CETTE CLE" sinon
+     * @return "VEUILLEZ VOUS AUTHENTIFIER D'ABORD" si le client n'est pas authentifie
+     * l'information associe à la cle si elle existe, "AUCUNE INFO POUR CETTE CLE" sinon
      */
     public String demanderInformation(Client client, String cle){
-        return "";
+        String result = "";
+        if (clientsConnectes.containsKey(client.getIp())){
+            HashMap<String, String> hashClient = clientsConnectes.get(client.getIp());
+            if (hashClient.containsKey(cle)){
+                result = hashClient.get(cle);
+            }
+            else{
+                result = "AUCUNE INFO POUR CETTE CLE";
+            }
+        }
+        else{
+            result = "VEUILLEZ VOUS AUTHENTIFIER D'ABORD";
+        }
+        return result;
     }
 
     /*
@@ -43,16 +84,28 @@ public class Serveur {
      * @return "OK" si donnée effacée, "AUCUNE INFO POUR CETTE CLE" sinon
      */
     public String effacerInformation(Client client, String cle){
-        return "";
+        String resultat = "";
+        if (clientsConnectes.containsKey(client.getIp())){
+            HashMap<String, String> hashClient = clientsConnectes.get(client.getIp());
+            hashClient.remove(cle);
+        }
+        else{
+            resultat = "VEUILLEZ VOUS AUTHENTIFIER D'ABORD";
+        }
+        return resultat;
     }
 
     /*
-     * @param client qui demande l'existence de la cle cle
+     * @param client qui demande l'existence de la cle
      * @param cle dont on teste l'existence
-     * @return true si la cle exist dans le hash du client courant, false sinon
+     * @return true si la cle exist dans le hash du client courant, false sinon ou si le client n'est pas authentifie
      */
     public boolean exists(Client client, String cle){
-        return false;
+        boolean result = false;
+        if (clientsConnectes.containsKey(client.getIp())){
+            result = (clientsConnectes.get(client.getIp())).containsKey(cle);
+        }
+        return result;
     }
 
     /*
