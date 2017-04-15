@@ -15,6 +15,10 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 
 @RestController
+@RequestMapping("/get")
+/**
+ * ReponseInformation get(cle)
+ */
 public class DemanderControleur {
 
 

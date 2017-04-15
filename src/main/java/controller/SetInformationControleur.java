@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-public class StockerControleur {
+public class SetInformationControleur {
 
 
     @PostMapping("/set")
