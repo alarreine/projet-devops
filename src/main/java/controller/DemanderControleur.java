@@ -20,9 +20,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
  * ReponseInformation get(cle)
  */
 public class DemanderControleur {
-
-
-
     @RequestMapping(method = RequestMethod.GET, value = "/key/{k}")
     public ReponseBasic getInformationByKey(@PathVariable String k) {
 
@@ -39,7 +36,6 @@ public class DemanderControleur {
 
     @RequestMapping(method = RequestMethod.GET, value = "/listclient")
     public ReponseBasic getListClientConnected() {
-
         ReponseListClient reponse = new ReponseListClient();
         reponse.getListClient().add(new Client("Malala","local"));
         reponse.getListClient().add(new Client("Fred","local"));
@@ -48,7 +44,6 @@ public class DemanderControleur {
 
     @RequestMapping(method = RequestMethod.GET, value = "/exist")
     public ReponseBasic existKey(@RequestParam(value="id", defaultValue="0") String key) {
-
         ReponseBasic reponse = new ReponseBasic();
         reponse.setStatus(StatusReponse.OK);
         return reponse;
