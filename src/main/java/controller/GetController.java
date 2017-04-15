@@ -1,9 +1,5 @@
 package controller;
 
-/**
- * Created by alarreine on 11/04/2017.
- */
-
 import bean.Client;
 import bean.reponse.ReponseBasic;
 import bean.reponse.ReponseInformation;
@@ -11,15 +7,12 @@ import bean.reponse.ReponseListClient;
 import controller.exception.KeyNotFoundException;
 import enumerate.StatusReponse;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-
-@RestController
-@RequestMapping("/get")
 /**
- * ReponseInformation get(cle)
+ * Created by alarreine on 15/04/2017.
  */
-public class DemanderControleur {
+@RestController
+public class GetController {
     @RequestMapping(method = RequestMethod.GET, value = "/key/{k}")
     public ReponseBasic getInformationByKey(@PathVariable String k) {
 
@@ -48,12 +41,4 @@ public class DemanderControleur {
         reponse.setStatus(StatusReponse.OK);
         return reponse;
     }
-
-
-
-
-
-
-
 }
-
