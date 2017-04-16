@@ -12,6 +12,9 @@ public class Client {
         this.ip = ip;
     }
 
+    public Client() {
+    }
+
     public String getNom() {
         return nom;
     }

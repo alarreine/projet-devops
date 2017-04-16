@@ -10,18 +10,18 @@ import java.util.List;
 
 public class Information extends Basic {
 
-    private List<String> information;
+    private List<String> info;
 
     public Information() {
         super();
-        this.information = new ArrayList<>();
+        this.info = new ArrayList<>();
     }
 
-    public List<String> getInformation() {
-        return information;
+    public List<String> getInfo() {
+        return info;
     }
 
-    public void setInformation(List<String> information) {
-        this.information = information;
+    public void setInfo(List<String> info) {
+        this.info = info;
     }
 }

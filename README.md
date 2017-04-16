@@ -10,3 +10,11 @@
 # Pour lancer l'application 
  mvn spring-boot:run
 
+# Pour tester avec `curl`
+## POST méthods
+* Renomer un clé \
+`curl -H "Content-Type: application/json" -X POST -d '{"key":"1","newKey":"3"}' http://localhost:8080/rename`
+
+## GET méthods
+* Demmander info par clé \
+`curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X GET http://localhost:8080/key/{key}`

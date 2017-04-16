@@ -4,6 +4,7 @@ package bean.requete;
  * Created by alarreine on 11/04/2017.
  */
 
+import bean.reponse.Information;
 import enumerate.TypeEviction;
 
 import java.util.ArrayList;
@@ -13,13 +14,13 @@ import java.util.List;
 public class SetInformation {
 
     private String key;
-    private List<String> info;
+    private Information info;
     private Integer ttl;
     private TypeEviction typeEviction;
 
     public SetInformation(String key, List<String> info, Integer ttl, TypeEviction typeEviction) {
         this.key = key;
-        this.info = new ArrayList<>();
+        this.info = new Information();
         this.ttl = ttl;
         this.typeEviction = typeEviction;
     }
@@ -31,7 +32,7 @@ public class SetInformation {
 
     }
 
-    public SetInformation(String key, List<String> info) {
+    public SetInformation(String key, Information info) {
         this.key = key;
         this.info = info;
         ttl=100;
@@ -46,16 +47,16 @@ public class SetInformation {
         this.key = key;
     }
 
-    public List<String> getListInfo() {
+    public Information getListInfo() {
         return info;
     }
 
-    public void setListInfo(List<String> info) {
+    public void setListInfo(Information info) {
         this.info = info;
     }
 
     public void addToListInfo(String info) {
-        getListInfo().add(info);
+        getListInfo().getInfo().add(info);
     }
 
     public Integer getTtl() {

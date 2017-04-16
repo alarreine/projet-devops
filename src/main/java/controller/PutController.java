@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
  * Controlleur pour les méthodes qui font de mise-a-jour des informations stockées
  */
 @RestController
-@RequestMapping(method = RequestMethod.POST)
+@RequestMapping(method = RequestMethod.PUT)
 public class PutController {
 
     @RequestMapping(value = "/rename")

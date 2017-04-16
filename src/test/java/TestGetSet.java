@@ -14,14 +14,14 @@
 		String cle = "cle";
 		String valeur = "contenu de 'cle'";
 		assertTrue(this.stocker.stockerInformationParCle(cle, valeur).getStatusCode().is2xxSuccessful());
-		assertEquals(this.demander.obtenirInformationParCle(cle).getInformation(), valeur);
+		assertEquals(this.demander.obtenirInformationParCle(cle).getInfo(), valeur);
 	}
 
 	@Test
 	public void testGetCleInexistante(){
 		String cle = "cle";
 		String valeur = "contenu de 'cle'";
-		assertNotEquals(this.demander.obtenirInformationParCle(cle).getInformation(), valeur);
+		assertNotEquals(this.demander.obtenirInformationParCle(cle).getInfo(), valeur);
 		assertFalse(this.demander.obtenirInformationParCle(cle).exist());
 	}
 
@@ -32,7 +32,7 @@
 		String valeur2 = "nouveau contenu de 'cle'";
 		assertTrue(this.stocker.stockerInformationParCle(cle, valeur1).getStatusCode().is2xxSuccessful());
 		assertTrue(this.stocker.stockerInformationParCle(cle, valeur2).getStatusCode().is2xxSuccessful());
-		assertEquals(this.demander.obtenirInformationParCle(cle).getInformation(), valeur2);
+		assertEquals(this.demander.obtenirInformationParCle(cle).getInfo(), valeur2);
 	}
 
 	@Test
@@ -40,7 +40,7 @@
 		String cle = "clé 100% spécial !§*$£^ù c'est comme ça ;) \"voilà voilà\"";
 		String valeur = "Le contenu est pas mal non plus \\bonjour\\/\\";
 		assertTrue(this.stocker.stockerInformationParCle(cle, valeur).getStatusCode().is2xxSuccessful());
-		assertEquals(this.demander.obtenirInformationParCle(cle).getInformation(), valeur);
+		assertEquals(this.demander.obtenirInformationParCle(cle).getInfo(), valeur);
 	}
 */
 //}

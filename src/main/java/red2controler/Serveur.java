@@ -1,6 +1,10 @@
 package red2controler;
 
 import bean.Client;
+import bean.reponse.ClientList;
+import controller.exception.KeyNotFoundException;
+import controller.exception.PostBadAuthenticationException;
+
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
@@ -19,10 +23,10 @@ public class Serveur {
         initialiserBDMotDePasse();
     }
 
-    public void initialiserBDMotDePasse(){
+    public void initialiserBDMotDePasse() {
         // Les adresses IP seront fournies par Agustin
-        bdMotDePasse.put("127.0.1.0","1234");
-        bdMotDePasse.put("127.0.0.0","AZERTY");
+        bdMotDePasse.put("127.0.1.0", "1234");
+        bdMotDePasse.put("127.0.0.0", "AZERTY");
     }
 
     /************************** Interface du serveur ********************************/
@@ -34,22 +38,20 @@ public class Serveur {
      * @return "VOUS N'AVEZ PAS DE COMPTE, VEUILLEZ EN CREER UN" si le client n'a pas de compte
      * AUTHENTIFICATION REUSSIE" si c'est le bon mdp, "MAUVAIS MOT DE PASSE" sinon
      */
-    public String auth(Client client, String password){
+    public String auth(Client client, String password) {
         String resultat = "";
-        if (bdMotDePasse.containsKey(client.getIp())){
-            if ((bdMotDePasse.get(client.getIp())).equals(password)){
+        if (bdMotDePasse.containsKey(client.getIp())) {
+            if ((bdMotDePasse.get(client.getIp())).equals(password)) {
                 resultat = "AUTHENTIFICATION REUSSIE";
-                if (!clientsConnectes.containsKey(client.getIp())){
+                if (!clientsConnectes.containsKey(client.getIp())) {
                     HashMap<String, String> hashClient = new HashMap<>();
                     clientsConnectes.put(client.getIp(), hashClient);
-                }
-                else{
-                    resultat = "MAUVAIS MOT DE PASSE";
+                } else {
+                    throw new PostBadAuthenticationException();
                 }
             }
-        }
-        else{
-            resultat = "VOUS N'AVEZ PAS DE COMPTE, VEUILLEZ EN CREER UN";
+        } else {
+            throw new PostBadAuthenticationException("VOUS N'AVEZ PAS DE COMPTE, VEUILLEZ EN CREER UN");
         }
         return resultat;
     }
@@ -61,18 +63,16 @@ public class Serveur {
      * @return "VEUILLEZ VOUS AUTHENTIFIER D'ABORD" si le client n'est pas authentifie
      * l'information associe à la cle si elle existe, "AUCUNE INFO POUR CETTE CLE" sinon
      */
-    public String demanderInformation(Client client, String cle){
+    public String demanderInformation(Client client, String cle) {
         String result = "";
-        if (clientsConnectes.containsKey(client.getIp())){
+        if (clientsConnectes.containsKey(client.getIp())) {
             HashMap<String, String> hashClient = clientsConnectes.get(client.getIp());
-            if (hashClient.containsKey(cle)){
+            if (hashClient.containsKey(cle)) {
                 result = hashClient.get(cle);
+            } else {
+                throw new KeyNotFoundException(cle);
             }
-            else{
-                result = "AUCUNE INFO POUR CETTE CLE";
-            }
-        }
-        else{
+        } else {
             result = "VEUILLEZ VOUS AUTHENTIFIER D'ABORD";
         }
         return result;
@@ -83,13 +83,12 @@ public class Serveur {
      * @param cle de la donnée à effacer
      * @return "OK" si donnée effacée, "AUCUNE INFO POUR CETTE CLE" sinon
      */
-    public String effacerInformation(Client client, String cle){
+    public String effacerInformation(Client client, String cle) {
         String resultat = "";
-        if (clientsConnectes.containsKey(client.getIp())){
+        if (clientsConnectes.containsKey(client.getIp())) {
             HashMap<String, String> hashClient = clientsConnectes.get(client.getIp());
             hashClient.remove(cle);
-        }
-        else{
+        } else {
             resultat = "VEUILLEZ VOUS AUTHENTIFIER D'ABORD";
         }
         return resultat;
@@ -100,10 +99,16 @@ public class Serveur {
      * @param cle cle dont on teste l'existence
      * @return true si la cle exist dans le hash du client courant, false sinon ou si le client n'est pas authentifie
      */
-    public boolean exists(Client client, String cle){
+    public boolean exists(Client client, String cle) {
         boolean result = false;
-        if (clientsConnectes.containsKey(client.getIp())){
-            result = (clientsConnectes.get(client.getIp())).containsKey(cle);
+        if (clientsConnectes.containsKey(client.getIp())) {
+            if((clientsConnectes.get(client.getIp())).containsKey(cle)){
+                result = true;
+            }else {
+                throw new KeyNotFoundException(cle);
+            }
+
+
         }
         return result;
     }
@@ -117,25 +122,22 @@ public class Serveur {
      * "IMPOSSIBLE D'INCREMENTER" si la valeur à cette clé n'est pas un entier
      * <cle> <nouvelle valeur> si information incrémentée
      */
-    public String incrementerInformation(Client client, String cle){
+    public String incrementerInformation(Client client, String cle) {
         String result = "";
-        if (clientsConnectes.containsKey(client.getIp())){
+        if (clientsConnectes.containsKey(client.getIp())) {
             HashMap<String, String> hashClient = clientsConnectes.get(client.getIp());
-            if (hashClient.containsKey(cle)){
-                try{
+            if (hashClient.containsKey(cle)) {
+                try {
                     int oldValue = Integer.parseInt(hashClient.get(cle));
                     hashClient.put(cle, String.valueOf(oldValue++));
                     result = cle + " " + hashClient.get(cle);
-                }
-                catch (NumberFormatException e){
+                } catch (NumberFormatException e) {
                     result = "IMPOSSIBLE D'INCREMENTER";
                 }
-            }
-            else{
+            } else {
                 result = "AUCUNE INFO POUR CETTE CLE";
             }
-        }
-        else{
+        } else {
             result = "VEUILLEZ VOUS AUTHENTIFIER D'ABORD";
         }
         return result;
@@ -148,13 +150,12 @@ public class Serveur {
      * @return "VEUILLEZ VOUS AUTHENTIFIER D'ABORD" si client non authentifié
      * "CACHE NETTOYE, AU REVOIR" sinon
      */
-    public String quitter(Client client){
+    public String quitter(Client client) {
         String result = "";
-        if (clientsConnectes.containsKey(client.getIp())){
+        if (clientsConnectes.containsKey(client.getIp())) {
             clientsConnectes.remove(client.getIp());
             result = "CACHE NETTOYE, AU REVOIR";
-        }
-        else{
+        } else {
             result = "VEUILLEZ VOUS AUTHENTIFIER D'ABORD";
         }
         return result;
@@ -172,20 +173,18 @@ public class Serveur {
      * "AUCUNE INFO POUR CETTE CLE" si la cle à renommer n'est pas dans la table
      * <nouvelle cle> <information> si renommage réussie
      */
-    public String renomeCle(Client client, String cleAvant, String cleApres){
+    public String renomeCle(Client client, String cleAvant, String cleApres) {
         String result = "";
-        if (clientsConnectes.containsKey(client.getIp())){
+        if (clientsConnectes.containsKey(client.getIp())) {
             HashMap<String, String> hashClient = clientsConnectes.get(client.getIp());
-            if (hashClient.containsKey(cleAvant)){
+            if (hashClient.containsKey(cleAvant)) {
                 hashClient.put(cleApres, hashClient.get(cleAvant));
                 hashClient.remove(cleAvant);
                 result = cleApres + " " + hashClient.get(cleApres);
-            }
-            else{
+            } else {
                 result = "AUCUNE INFO POUR CETTE CLE";
             }
-        }
-        else{
+        } else {
             result = "VEUILLEZ VOUS AUTHENTIFIER D'ABORD";
         }
         return result;
@@ -200,17 +199,18 @@ public class Serveur {
      * @return "VEUILLEZ VOUS AUTHENTIFIER D'ABORD" si client non-authentifié
      * "<CLE> <INFO>" si set réussi
      */
-    public String setInformation(Client client, String cle, String info){
-        String result = "";
-        if (clientsConnectes.containsKey(client.getIp())){
+    public boolean setInformation(Client client, String cle, String info) {
+        boolean result = false;
+        if (clientsConnectes.containsKey(client.getIp())) {
             HashMap<String, String> hashClient = clientsConnectes.get(client.getIp());
             hashClient.put(cle, info);
-            result = cle + " " + hashClient.get(cle);
-        }
-        else{
-            result = "VEUILLEZ VOUS AUTHENTIFIER D'ABORD";
+            result =true;
+        } else {
+
+            throw new PostBadAuthenticationException("VEUILLEZ VOUS AUTHENTIFIER D'ABORD");
         }
         return result;
     }
+
 
 }
