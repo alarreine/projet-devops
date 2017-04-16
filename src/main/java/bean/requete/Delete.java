@@ -5,12 +5,12 @@ import bean.Client;
 /**
  * Created by alarreine on 12/04/2017.
  */
-public class RequeteEffacer {
+public class Delete {
 
     private Client client;
     private String key;
 
-    public RequeteEffacer(Client client, String key) {
+    public Delete(Client client, String key) {
         this.client = client;
         this.key = key;
     }

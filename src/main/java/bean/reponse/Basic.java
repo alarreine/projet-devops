@@ -5,14 +5,14 @@ import enumerate.StatusReponse;
 /**
  * Created by alarreine on 12/04/2017.
  */
-public  class ReponseBasic {
+public  class Basic {
     private StatusReponse status;
 
-    public ReponseBasic(StatusReponse status) {
+    public Basic(StatusReponse status) {
         this.status = status;
     }
 
-    public ReponseBasic() {
+    public Basic() {
 
     }
 

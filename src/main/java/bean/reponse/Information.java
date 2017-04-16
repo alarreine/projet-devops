@@ -8,11 +8,11 @@ import java.util.List;
  */
 
 
-public class ReponseInformation extends ReponseBasic {
+public class Information extends Basic {
 
     private List<String> information;
 
-    public ReponseInformation() {
+    public Information() {
         super();
         this.information = new ArrayList<>();
     }

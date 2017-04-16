@@ -1,7 +1,29 @@
 package controller;
 
+import bean.reponse.Basic;
+import bean.requete.RenameKey;
+import controller.exception.KeyNotFoundException;
+import controller.exception.PostConflicException;
+import enumerate.StatusReponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
 /**
- * Created by alarreine on 15/04/2017.
+ * Controlleur pour les méthodes qui font de mise-a-jour des informations stockées
  */
+@RestController
+@RequestMapping(method = RequestMethod.POST)
 public class PutController {
+
+    @RequestMapping(value = "/rename")
+    @ResponseStatus(HttpStatus.OK)
+    public Basic renomeCle(@RequestBody RenameKey renomeCles) {
+
+        Basic reponseBasic = new Basic();
+        if(renomeCles.getKey()=="1") {
+            throw new PostConflicException(renomeCles.getKey());
+        }
+        reponseBasic.setStatus(StatusReponse.OK);
+        return reponseBasic;
+    }
 }

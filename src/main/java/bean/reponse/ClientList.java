@@ -8,16 +8,16 @@ import java.util.List;
 /**
  * Created by alarreine on 12/04/2017.
  */
-public class ReponseListClient extends ReponseBasic {
+public class ClientList extends Basic {
 
     private List<Client> listClient;
 
-    public ReponseListClient(List<Client> listClient) {
+    public ClientList(List<Client> listClient) {
         super();
         this.listClient = listClient;
     }
 
-    public ReponseListClient() {
+    public ClientList() {
         super();
         this.listClient = new ArrayList<>();
     }

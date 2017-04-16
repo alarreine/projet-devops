@@ -3,12 +3,12 @@ package bean.requete;
 /**
  * Created by alarreine on 12/04/2017.
  */
-public class RequeteIncrement {
+public class Increment {
 
     private String key;
     private Integer number;
 
-    public RequeteIncrement(String key, Integer number) {
+    public Increment(String key, Integer number) {
         this.key = key;
         this.number = number;
     }
