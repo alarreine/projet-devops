@@ -96,8 +96,8 @@ public class Serveur {
     }
 
     /*
-     * @param client qui demande l'existence de la cle
-     * @param cle dont on teste l'existence
+     * @param client client qui demande l'existence de la cle
+     * @param cle cle dont on teste l'existence
      * @return true si la cle exist dans le hash du client courant, false sinon ou si le client n'est pas authentifie
      */
     public boolean exists(Client client, String cle){
@@ -112,43 +112,105 @@ public class Serveur {
      * Incremente la valeur à la cle
      * @param client qui demande l'incrementation
      * @param cle de l'information à incrémenter
-     * @return l'information incrémentée si c'était un entier, renvoie "INCREMENTATION IMPOSSIBLE" sinon
+     * @return "VEUILLEZ VOUS AUTHENTIFIER D'ABORD" si le client n'est pas authentifie
+     * "AUCUNE INFO POUR CETTE CLE" s'il n'y a pas d'information associee à la cle
+     * "IMPOSSIBLE D'INCREMENTER" si la valeur à cette clé n'est pas un entier
+     * <cle> <nouvelle valeur> si information incrémentée
      */
     public String incrementerInformation(Client client, String cle){
-        return "";
+        String result = "";
+        if (clientsConnectes.containsKey(client.getIp())){
+            HashMap<String, String> hashClient = clientsConnectes.get(client.getIp());
+            if (hashClient.containsKey(cle)){
+                try{
+                    int oldValue = Integer.parseInt(hashClient.get(cle));
+                    hashClient.put(cle, String.valueOf(oldValue++));
+                    result = cle + " " + hashClient.get(cle);
+                }
+                catch (NumberFormatException e){
+                    result = "IMPOSSIBLE D'INCREMENTER";
+                }
+            }
+            else{
+                result = "AUCUNE INFO POUR CETTE CLE";
+            }
+        }
+        else{
+            result = "VEUILLEZ VOUS AUTHENTIFIER D'ABORD";
+        }
+        return result;
     }
 
 
     /*
      * Efface le hash de l'utilisateur qui veut quitter
      * @param client qui veut quitter
-     * @return "AU REVOIR" et le client n'a plus de hash, "IMPOSSIBLE DE QUITTER" sinon
+     * @return "VEUILLEZ VOUS AUTHENTIFIER D'ABORD" si client non authentifié
+     * "CACHE NETTOYE, AU REVOIR" sinon
      */
     public String quitter(Client client){
-        return "";
+        String result = "";
+        if (clientsConnectes.containsKey(client.getIp())){
+            clientsConnectes.remove(client.getIp());
+            result = "CACHE NETTOYE, AU REVOIR";
+        }
+        else{
+            result = "VEUILLEZ VOUS AUTHENTIFIER D'ABORD";
+        }
+        return result;
     }
 
     /*
      * Renommer la cle donnee en argument si elle existe dans le hash du client
+     * Ceci implique qu'à la nouvelle clé sera associée l'info de l'ancienne cle
+     * Si le hash du client contennait déjà la nouvelle cle, son info sera changé par l'info de l'ancienne cle
+     * et l'ancienne cle et son information associée seront supprimees
      * @param client qui modifie son hash
      * @param cleavant la cle à renommer
      * @param cleapres la nouvelle cle
-     * @return "<NOUVELLE CLE> <INFO>" si c'est bon, "IMPOSSIBLE DE RENOMMER" si cle inexistante
+     * @return "VEUILLEZ VOUS AUTHENTIFIER D'ABORD" si cleint non authentifié
+     * "AUCUNE INFO POUR CETTE CLE" si la cle à renommer n'est pas dans la table
+     * <nouvelle cle> <information> si renommage réussie
      */
     public String renomeCle(Client client, String cleAvant, String cleApres){
-        return "";
+        String result = "";
+        if (clientsConnectes.containsKey(client.getIp())){
+            HashMap<String, String> hashClient = clientsConnectes.get(client.getIp());
+            if (hashClient.containsKey(cleAvant)){
+                hashClient.put(cleApres, hashClient.get(cleAvant));
+                hashClient.remove(cleAvant);
+                result = cleApres + " " + hashClient.get(cleApres);
+            }
+            else{
+                result = "AUCUNE INFO POUR CETTE CLE";
+            }
+        }
+        else{
+            result = "VEUILLEZ VOUS AUTHENTIFIER D'ABORD";
+        }
+        return result;
     }
 
     /*
      * Ajoute la cle associée à l'info précisée en argument si la cle n'existait pas encore
      * modifie l'information à cette cle sinon
      * @param client celui qui set une information
-     * @param cle de la nouvelle information
+     * @param cle de l'information
      * @param info a mettre a la cle indiquée
-     * @return "<CLE> <INFO>"
+     * @return "VEUILLEZ VOUS AUTHENTIFIER D'ABORD" si client non-authentifié
+     * "<CLE> <INFO>" si set réussi
      */
     public String setInformation(Client client, String cle, String info){
-        return "";
+        String result = "";
+        if (clientsConnectes.containsKey(client.getIp())){
+            HashMap<String, String> hashClient = clientsConnectes.get(client.getIp());
+            hashClient.put(cle, info);
+            result = cle + " " + hashClient.get(cle);
+        }
+        else{
+            result = "VEUILLEZ VOUS AUTHENTIFIER D'ABORD";
+        }
+        return result;
     }
 
 }
