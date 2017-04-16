@@ -8,6 +8,7 @@ import bean.requete.Auth;
 import bean.requete.SetInformation;
 import com.google.gson.Gson;
 import enumerate.StatusReponse;
+import enumerate.TypeEviction;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,38 +23,36 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping(method = RequestMethod.POST)
 public class PostController {
 
-    @RequestMapping("/{client}/set/{setInformation}")
-    public Basic stockerInformationParCle(@PathVariable String client, SetInformation setInformation, HttpServletRequest reques) {
+    @RequestMapping("/{client}/set")
+    @ResponseStatus(value = HttpStatus.ACCEPTED)
+    public ResponseEntity<Basic> stockerInformationParCle(@PathVariable String client, @RequestBody SetInformation setInformation, HttpServletRequest request) {
         Gson gson = new Gson();
 
         Client cli = new Client();
         cli.setNom(client);
-        cli.setIp(reques.getRemoteAddr());
+        cli.setIp(request.getRemoteAddr());
 
-        String json = gson.toJson(setInformation.getListInfo());
+        String json = gson.toJson(setInformation.getInfo());
 
         Application.getServer().setInformation(cli, setInformation.getKey(), json);
         Basic reponse = new Basic();
         reponse.setStatus(StatusReponse.OK);
 
-        return reponse;
+        return new ResponseEntity<Basic>(reponse,HttpStatus.ACCEPTED);
     }
 
-    @RequestMapping("/auth/{client}")
+    @RequestMapping("/auth")
     @ResponseStatus(value = HttpStatus.ACCEPTED)
-    public Basic authorisation(@PathVariable Auth client, HttpServletRequest request) {
+    public ResponseEntity<Basic> authorisation(@RequestBody Auth client, HttpServletRequest request) {
 
         Client cli = new Client();
         cli.setIp(request.getRemoteAddr());
         cli.setNom(client.getUser());
 
-        Basic reponse = new Basic();
-        reponse.setStatus(StatusReponse.UNAUTHORIZED);
+        Application.getServer().auth(cli, client);
 
-        Application.getServer().auth(cli, client.getPassword());
-        reponse.setStatus(StatusReponse.AUTHORIZED);
 
-        return reponse;
+        return new ResponseEntity<Basic>(new Basic(StatusReponse.AUTHORIZED),HttpStatus.ACCEPTED);
     }
 
 }

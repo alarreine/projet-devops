@@ -7,11 +7,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * Created by alarreine on 16/04/2017.
  */
 @ResponseStatus(HttpStatus.UNAUTHORIZED)
-public class PostBadAuthenticationException extends RuntimeException {
-    public PostBadAuthenticationException() {
+public class BadAuthenticationException extends RuntimeException {
+    public BadAuthenticationException() {
         super("MAUVAIS MOT DE PASSE ");
     }
-    public PostBadAuthenticationException(String m) {
+    public BadAuthenticationException(String m) {
         super(m);
     }
 }

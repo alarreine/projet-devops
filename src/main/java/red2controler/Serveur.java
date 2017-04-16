@@ -1,9 +1,10 @@
 package red2controler;
 
+import application.Application;
 import bean.Client;
-import bean.reponse.ClientList;
+import bean.requete.Auth;
 import controller.exception.KeyNotFoundException;
-import controller.exception.PostBadAuthenticationException;
+import controller.exception.BadAuthenticationException;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
@@ -20,13 +21,13 @@ public class Serveur {
     public Serveur() throws NoSuchAlgorithmException, UnsupportedEncodingException {
         clientsConnectes = new HashMap<String, HashMap<String, String>>();
         bdMotDePasse = new HashMap<String, String>();
-        initialiserBDMotDePasse();
+//        initialiserBDMotDePasse();
     }
 
     public void initialiserBDMotDePasse() {
         // Les adresses IP seront fournies par Agustin
-        bdMotDePasse.put("127.0.1.0", "1234");
-        bdMotDePasse.put("127.0.0.0", "AZERTY");
+//        bdMotDePasse.put("127.0.1.0", "1234");
+//        bdMotDePasse.put("127.0.0.0", "AZERTY");
     }
 
     /************************** Interface du serveur ********************************/
@@ -38,22 +39,21 @@ public class Serveur {
      * @return "VOUS N'AVEZ PAS DE COMPTE, VEUILLEZ EN CREER UN" si le client n'a pas de compte
      * AUTHENTIFICATION REUSSIE" si c'est le bon mdp, "MAUVAIS MOT DE PASSE" sinon
      */
-    public String auth(Client client, String password) {
-        String resultat = "";
-        if (bdMotDePasse.containsKey(client.getIp())) {
-            if ((bdMotDePasse.get(client.getIp())).equals(password)) {
-                resultat = "AUTHENTIFICATION REUSSIE";
-                if (!clientsConnectes.containsKey(client.getIp())) {
-                    HashMap<String, String> hashClient = new HashMap<>();
-                    clientsConnectes.put(client.getIp(), hashClient);
-                } else {
-                    throw new PostBadAuthenticationException();
-                }
+    public boolean auth(Client client, Auth auth) {
+        if (Application.getPassword().compareTo(auth.getPassword()) == 0) {
+            String pass = bdMotDePasse.get(client.clientToHash());
+            //Si est null, ça veut dire que il est un nouveau client. On crée une bd
+            if (pass == null) {
+                bdMotDePasse.put(client.clientToHash(),client.getNom());
+                HashMap<String, String> hashClient = new HashMap<>();
+                clientsConnectes.put(client.clientToHash(), hashClient);
             }
+
         } else {
-            throw new PostBadAuthenticationException("VOUS N'AVEZ PAS DE COMPTE, VEUILLEZ EN CREER UN");
+            throw new BadAuthenticationException();
         }
-        return resultat;
+
+        return true;
     }
 
     /*
@@ -65,15 +65,16 @@ public class Serveur {
      */
     public String demanderInformation(Client client, String cle) {
         String result = "";
-        if (clientsConnectes.containsKey(client.getIp())) {
-            HashMap<String, String> hashClient = clientsConnectes.get(client.getIp());
+        HashMap<String, String> hashClient = clientsConnectes.get(client.clientToHash());
+        if (hashClient!=null) {
             if (hashClient.containsKey(cle)) {
                 result = hashClient.get(cle);
             } else {
                 throw new KeyNotFoundException(cle);
             }
         } else {
-            result = "VEUILLEZ VOUS AUTHENTIFIER D'ABORD";
+            throw new BadAuthenticationException("VEUILLEZ VOUS AUTHENTIFIER D'ABORD");
+
         }
         return result;
     }
@@ -83,15 +84,15 @@ public class Serveur {
      * @param cle de la donnée à effacer
      * @return "OK" si donnée effacée, "AUCUNE INFO POUR CETTE CLE" sinon
      */
-    public String effacerInformation(Client client, String cle) {
+    public boolean effacerInformation(Client client, String cle) {
         String resultat = "";
-        if (clientsConnectes.containsKey(client.getIp())) {
-            HashMap<String, String> hashClient = clientsConnectes.get(client.getIp());
+        HashMap<String, String> hashClient = clientsConnectes.get(client.clientToHash());
+        if (hashClient!=null) {
             hashClient.remove(cle);
         } else {
-            resultat = "VEUILLEZ VOUS AUTHENTIFIER D'ABORD";
+            throw new BadAuthenticationException("VEUILLEZ VOUS AUTHENTIFIER D'ABORD");
         }
-        return resultat;
+        return true;
     }
 
     /*
@@ -101,10 +102,11 @@ public class Serveur {
      */
     public boolean exists(Client client, String cle) {
         boolean result = false;
-        if (clientsConnectes.containsKey(client.getIp())) {
-            if((clientsConnectes.get(client.getIp())).containsKey(cle)){
+        HashMap<String, String> hashClient = clientsConnectes.get(client.clientToHash());
+        if (hashClient!=null) {
+            if ((clientsConnectes.get(client.clientToHash())).containsKey(cle)) {
                 result = true;
-            }else {
+            } else {
                 throw new KeyNotFoundException(cle);
             }
 
@@ -124,8 +126,8 @@ public class Serveur {
      */
     public String incrementerInformation(Client client, String cle) {
         String result = "";
-        if (clientsConnectes.containsKey(client.getIp())) {
-            HashMap<String, String> hashClient = clientsConnectes.get(client.getIp());
+        if (clientsConnectes.containsKey(client.clientToHash())) {
+            HashMap<String, String> hashClient = clientsConnectes.get(client.clientToHash());
             if (hashClient.containsKey(cle)) {
                 try {
                     int oldValue = Integer.parseInt(hashClient.get(cle));
@@ -152,11 +154,11 @@ public class Serveur {
      */
     public String quitter(Client client) {
         String result = "";
-        if (clientsConnectes.containsKey(client.getIp())) {
-            clientsConnectes.remove(client.getIp());
+        if (clientsConnectes.containsKey(client.clientToHash())) {
+            clientsConnectes.remove(client.clientToHash());
             result = "CACHE NETTOYE, AU REVOIR";
         } else {
-            result = "VEUILLEZ VOUS AUTHENTIFIER D'ABORD";
+            throw new BadAuthenticationException("VEUILLEZ VOUS AUTHENTIFIER D'ABORD");
         }
         return result;
     }
@@ -175,8 +177,8 @@ public class Serveur {
      */
     public String renomeCle(Client client, String cleAvant, String cleApres) {
         String result = "";
-        if (clientsConnectes.containsKey(client.getIp())) {
-            HashMap<String, String> hashClient = clientsConnectes.get(client.getIp());
+        if (clientsConnectes.containsKey(client.clientToHash())) {
+            HashMap<String, String> hashClient = clientsConnectes.get(client.clientToHash());
             if (hashClient.containsKey(cleAvant)) {
                 hashClient.put(cleApres, hashClient.get(cleAvant));
                 hashClient.remove(cleAvant);
@@ -201,13 +203,13 @@ public class Serveur {
      */
     public boolean setInformation(Client client, String cle, String info) {
         boolean result = false;
-        if (clientsConnectes.containsKey(client.getIp())) {
-            HashMap<String, String> hashClient = clientsConnectes.get(client.getIp());
+        HashMap<String, String> hashClient = clientsConnectes.get(client.clientToHash());
+        if (hashClient!=null) {
             hashClient.put(cle, info);
-            result =true;
+            result = true;
         } else {
 
-            throw new PostBadAuthenticationException("VEUILLEZ VOUS AUTHENTIFIER D'ABORD");
+            throw new BadAuthenticationException("VEUILLEZ VOUS AUTHENTIFIER D'ABORD");
         }
         return result;
     }

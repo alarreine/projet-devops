@@ -2,8 +2,7 @@ package controller;
 
 import bean.reponse.Basic;
 import bean.requete.RenameKey;
-import controller.exception.KeyNotFoundException;
-import controller.exception.PostConflicException;
+import controller.exception.ConflicException;
 import enumerate.StatusReponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +20,7 @@ public class PutController {
 
         Basic reponseBasic = new Basic();
         if(renomeCles.getKey()=="1") {
-            throw new PostConflicException(renomeCles.getKey());
+            throw new ConflicException(renomeCles.getKey());
         }
         reponseBasic.setStatus(StatusReponse.OK);
         return reponseBasic;

@@ -47,16 +47,16 @@ public class SetInformation {
         this.key = key;
     }
 
-    public Information getListInfo() {
+    public Information getInfo() {
         return info;
     }
 
-    public void setListInfo(Information info) {
+    public void setInfo(Information info) {
         this.info = info;
     }
 
     public void addToListInfo(String info) {
-        getListInfo().getInfo().add(info);
+        getInfo().getInfo().add(info);
     }
 
     public Integer getTtl() {

@@ -30,4 +30,9 @@ public class Client {
     public void setIp(String ip) {
         this.ip = ip;
     }
+
+    public String clientToHash(){
+
+        return getNom()+"-"+getIp();
+    }
 }
