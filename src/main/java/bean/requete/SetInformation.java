@@ -27,7 +27,7 @@ public class SetInformation {
 
     public SetInformation() {
 
-        ttl=100;
+        ttl = 100;
         typeEviction = TypeEviction.NOEVICTION;
 
     }
@@ -35,7 +35,7 @@ public class SetInformation {
     public SetInformation(String key, Information info) {
         this.key = key;
         this.info = info;
-        ttl=100;
+        ttl = 100;
         typeEviction = TypeEviction.NOEVICTION;
     }
 
