@@ -21,7 +21,12 @@ public class Application {
     private static String password;
 
     public static void main(String[] args) {
-        password = "123456";
+
+        if (args.length != 0) {
+            password = args[0];
+        } else {
+            password = "123456";
+        }
         try {
             server = new Serveur();
             SpringApplication.run(Application.class, args);
