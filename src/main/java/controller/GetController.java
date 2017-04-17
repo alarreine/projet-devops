@@ -5,11 +5,13 @@ import bean.Client;
 import bean.reponse.Basic;
 import bean.reponse.Information;
 import bean.reponse.ClientList;
+import bean.requete.SetInformation;
 import com.google.gson.Gson;
 import controller.exception.KeyNotFoundException;
 import enumerate.StatusReponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import red2controler.Serveur;
 
@@ -25,7 +27,7 @@ public class GetController {
 
     @RequestMapping(value = "/{client}/key/{k}")
     @ResponseStatus(HttpStatus.OK)
-    public Basic getInformationByKey(@PathVariable String client, @PathVariable String k,HttpServletRequest request) {
+    public ResponseEntity<Information>  getInformationByKey(@PathVariable String client, @PathVariable String k,HttpServletRequest request) {
 
         Client cli = new Client(client,request.getRemoteAddr());
         Gson gson = new Gson();
@@ -33,7 +35,10 @@ public class GetController {
         String result = Application.getServer().demanderInformation(cli,k);
         Information reponseInformation = gson.fromJson(result,Information.class);
 
-        return reponseInformation;
+
+        reponseInformation.setStatus(StatusReponse.KEY_FOUND);
+
+        return new ResponseEntity<Information>(reponseInformation,HttpStatus.ACCEPTED);
     }
 
 //    @RequestMapping(value = "/{client}/listclient/")
