@@ -17,9 +17,9 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping(method = RequestMethod.DELETE)
 public class DeleteController {
+
     @RequestMapping(value = "/{client}/delete/{k}")
     @ResponseStatus(HttpStatus.OK)
-
     public Basic deleteKey(@PathVariable String client, @RequestBody Delete d, HttpServletRequest request){
         Client cli = new Client(client,request.getRemoteAddr());
         String result = Application.getServer().effacerInformation(cli, d.getKey());

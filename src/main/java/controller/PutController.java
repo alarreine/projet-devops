@@ -8,7 +8,9 @@ import bean.requete.Increase;
 import bean.requete.RenameKey;
 import bean.requete.SetInformation;
 import com.google.gson.Gson;
+import enumerate.StatusReponse;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,9 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping(method = RequestMethod.PUT)
 public class PutController {
 
-    @RequestMapping(value = "/{client}/rename/{renameKey}")
+    @RequestMapping(value = "/{client}/rename")
     @ResponseStatus(HttpStatus.OK)
-
     public Basic renameKey(@PathVariable String client, @RequestBody RenameKey renomeCles,HttpServletRequest request) {
         Client cli = new Client(client,request.getRemoteAddr());
         String result = Application.getServer().renomeCle(cli,renomeCles.getKey(),renomeCles.getNewKey());
@@ -31,9 +32,8 @@ public class PutController {
         return  reponseInformation;
     }
 
-    @RequestMapping(value = "/{client}/increase/{increase}")
+    @RequestMapping(value = "/{client}/increase")
     @ResponseStatus(HttpStatus.OK)
-
     public Basic increaseKey(@PathVariable String client, @RequestBody Increase iK, HttpServletRequest request){
         Client cli = new Client(client,request.getRemoteAddr());
         String result = Application.getServer().incrementerInformation(cli, iK.getKey());
@@ -43,14 +43,21 @@ public class PutController {
     }
 
 
-    @RequestMapping(value = "/{client}/addlist/{setInformation}")
+    @RequestMapping(value = "/{client}/addlist")
     @ResponseStatus(HttpStatus.OK)
-    public Basic addListe(@PathVariable String client, @RequestBody SetInformation sI, HttpServletRequest request){
+    public ResponseEntity<Basic> addListe(@PathVariable String client, @RequestBody SetInformation sI, HttpServletRequest request){
         Client cli = new Client(client,request.getRemoteAddr());
-        String result = Application.getServer().setInformation(cli, sI.getKey(),sI.getListInfo().getInfo().);
         Gson gson = new Gson();
-        Information reponseInformation = gson.fromJson(result,Information.class);
-        return  reponseInformation;
+
+        Information info1 = gson.fromJson(Application.getServer().demanderInformation(cli, sI.getKey()),Information.class);
+
+        info1.getInfo().addAll(sI.getInfo().getInfo());
+        String json = gson.toJson(info1);
+
+        Application.getServer().setInformation(cli, sI.getKey(),json);
+        Basic reponse = new Basic(StatusReponse.OK);
+
+        return  new ResponseEntity<Basic>(reponse,HttpStatus.OK);
     }
 
 }
