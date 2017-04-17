@@ -6,7 +6,9 @@ import bean.reponse.Basic;
 import bean.reponse.Information;
 import bean.requete.Delete;
 import com.google.gson.Gson;
+import enumerate.StatusReponse;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,11 +22,10 @@ public class DeleteController {
 
     @RequestMapping(value = "/{client}/delete/{k}")
     @ResponseStatus(HttpStatus.OK)
-    public Basic deleteKey(@PathVariable String client, @RequestBody Delete d, HttpServletRequest request){
+    public ResponseEntity<Basic> deleteKey(@PathVariable String client, @RequestBody Delete d, HttpServletRequest request){
         Client cli = new Client(client,request.getRemoteAddr());
-        String result = Application.getServer().effacerInformation(cli, d.getKey());
-        Gson gson = new Gson();
-        Information reponseInformation = gson.fromJson(result,Information.class);
-        return  reponseInformation;
+        Application.getServer().effacerInformation(cli, d.getKey());
+        Basic reponse = new Basic(StatusReponse.OK);
+        return  new ResponseEntity<Basic>(reponse, HttpStatus.OK);
     }
 }
