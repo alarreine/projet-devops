@@ -1,5 +1,4 @@
 import bean.requete.RenameKey;
-import controller.PostController;
 import controller.PutController;
 import junit.framework.TestCase;
 import org.junit.Before;
@@ -15,7 +14,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -25,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = PutController.class)
 @WebAppConfiguration
-public class TestPostController extends TestCase{
+public class TestPostController extends TestCase {
 
 
     private MockMvc mockMvc;
@@ -41,7 +39,7 @@ public class TestPostController extends TestCase{
     }
 
     @Test
-    public void testConflicKey() throws Exception{
+    public void testConflicKey() throws Exception {
         RenameKey requete = new RenameKey();
         requete.setKey("12");
         requete.setNewKey("2");

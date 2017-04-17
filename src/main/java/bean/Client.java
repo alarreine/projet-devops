@@ -31,8 +31,8 @@ public class Client {
         this.ip = ip;
     }
 
-    public String clientToHash(){
+    public String clientToHash() {
 
-        return getNom()+"-"+getIp();
+        return getNom() + "-" + getIp();
     }
 }

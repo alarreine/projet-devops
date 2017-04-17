@@ -24,40 +24,41 @@ public class PutController {
 
     @RequestMapping(value = "/{client}/rename")
     @ResponseStatus(HttpStatus.OK)
-    public Basic renameKey(@PathVariable String client, @RequestBody RenameKey renomeCles,HttpServletRequest request) {
-        Client cli = new Client(client,request.getRemoteAddr());
-        String result = Application.getServer().renomeCle(cli,renomeCles.getKey(),renomeCles.getNewKey());
+    public ResponseEntity<Information> renameKey(@PathVariable String client, @RequestBody RenameKey renomeCles, HttpServletRequest request) {
+        Client cli = new Client(client, request.getRemoteAddr());
+        String result = Application.getServer().renomeCle(cli, renomeCles.getKey(), renomeCles.getNewKey());
         Gson gson = new Gson();
-        Information reponseInformation = gson.fromJson(result,Information.class);
-        return  reponseInformation;
+        Information reponseInformation = gson.fromJson(result, Information.class);
+        reponseInformation.setStatus(StatusReponse.OK);
+        return new ResponseEntity<Information>(reponseInformation, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{client}/increase")
     @ResponseStatus(HttpStatus.OK)
-    public Basic increaseKey(@PathVariable String client, @RequestBody Increase iK, HttpServletRequest request){
-        Client cli = new Client(client,request.getRemoteAddr());
+    public ResponseEntity<Information> increaseKey(@PathVariable String client, @RequestBody Increase iK, HttpServletRequest request) {
+        Client cli = new Client(client, request.getRemoteAddr());
         String result = Application.getServer().incrementerInformation(cli, iK.getKey());
         Gson gson = new Gson();
-        Information reponseInformation = gson.fromJson(result,Information.class);
-        return  reponseInformation;
+        Information reponseInformation = gson.fromJson(result, Information.class);
+        reponseInformation.setStatus(StatusReponse.OK);
+        return new ResponseEntity<Information>(reponseInformation, HttpStatus.OK);
     }
 
 
     @RequestMapping(value = "/{client}/addlist")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Basic> addListe(@PathVariable String client, @RequestBody SetInformation sI, HttpServletRequest request){
-        Client cli = new Client(client,request.getRemoteAddr());
+    public ResponseEntity<Basic> addListe(@PathVariable String client, @RequestBody SetInformation sI, HttpServletRequest request) {
+        Client cli = new Client(client, request.getRemoteAddr());
         Gson gson = new Gson();
 
-        Information info1 = gson.fromJson(Application.getServer().demanderInformation(cli, sI.getKey()),Information.class);
+        Information info1 = gson.fromJson(Application.getServer().demanderInformation(cli, sI.getKey()), Information.class);
 
         info1.getInfo().addAll(sI.getInfo().getInfo());
         String json = gson.toJson(info1);
 
-        Application.getServer().setInformation(cli, sI.getKey(),json);
+        Application.getServer().setInformation(cli, sI.getKey(), json);
         Basic reponse = new Basic(StatusReponse.OK);
-
-        return  new ResponseEntity<Basic>(reponse,HttpStatus.OK);
+        return new ResponseEntity<Basic>(reponse, HttpStatus.OK);
     }
 
 }

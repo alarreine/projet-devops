@@ -5,7 +5,7 @@ import enumerate.StatusReponse;
 /**
  * Created by alarreine on 12/04/2017.
  */
-public  class Basic {
+public class Basic {
     private StatusReponse status;
 
     public Basic(StatusReponse status) {

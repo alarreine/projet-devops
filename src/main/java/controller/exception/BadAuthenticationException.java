@@ -11,6 +11,7 @@ public class BadAuthenticationException extends RuntimeException {
     public BadAuthenticationException() {
         super("MAUVAIS MOT DE PASSE ");
     }
+
     public BadAuthenticationException(String m) {
         super(m);
     }

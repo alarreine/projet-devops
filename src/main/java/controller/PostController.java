@@ -3,13 +3,10 @@ package controller;
 import application.Application;
 import bean.Client;
 import bean.reponse.Basic;
-import bean.reponse.Information;
 import bean.requete.Auth;
 import bean.requete.SetInformation;
 import com.google.gson.Gson;
 import enumerate.StatusReponse;
-import enumerate.TypeEviction;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,10 +32,8 @@ public class PostController {
         String json = gson.toJson(setInformation.getInfo());
 
         Application.getServer().setInformation(cli, setInformation.getKey(), json);
-        Basic reponse = new Basic();
-        reponse.setStatus(StatusReponse.OK);
 
-        return new ResponseEntity<Basic>(reponse,HttpStatus.ACCEPTED);
+        return new ResponseEntity<Basic>(new Basic(StatusReponse.OK), HttpStatus.ACCEPTED);
     }
 
     @RequestMapping("/auth")
@@ -52,7 +47,7 @@ public class PostController {
         Application.getServer().auth(cli, client);
 
 
-        return new ResponseEntity<Basic>(new Basic(StatusReponse.AUTHORIZED),HttpStatus.ACCEPTED);
+        return new ResponseEntity<Basic>(new Basic(StatusReponse.AUTHORIZED), HttpStatus.ACCEPTED);
     }
 
 }

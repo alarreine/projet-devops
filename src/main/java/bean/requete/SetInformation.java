@@ -7,7 +7,6 @@ package bean.requete;
 import bean.reponse.Information;
 import enumerate.TypeEviction;
 
-import java.util.ArrayList;
 import java.util.List;
 
 

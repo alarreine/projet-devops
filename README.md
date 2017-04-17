@@ -36,3 +36,4 @@
 ## DELETE
 * Supprimer cle \
 `curl -v -X DELETE http://localhost:8080/{nomClient}/delete/{key}`
+

@@ -35,7 +35,8 @@ public class Application {
     public static Serveur getServer() {
         return server;
     }
-    public static String getPassword(){
+
+    public static String getPassword() {
         return password;
     }
 }

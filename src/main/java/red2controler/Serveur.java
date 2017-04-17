@@ -2,9 +2,12 @@ package red2controler;
 
 import application.Application;
 import bean.Client;
+import bean.reponse.Information;
 import bean.requete.Auth;
-import controller.exception.KeyNotFoundException;
+import com.google.gson.Gson;
 import controller.exception.BadAuthenticationException;
+import controller.exception.IncreaseKeyException;
+import controller.exception.KeyNotFoundException;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
@@ -44,7 +47,7 @@ public class Serveur {
             String pass = bdMotDePasse.get(client.clientToHash());
             //Si est null, ça veut dire que il est un nouveau client. On crée une bd
             if (pass == null) {
-                bdMotDePasse.put(client.clientToHash(),client.getNom());
+                bdMotDePasse.put(client.clientToHash(), client.getNom());
                 HashMap<String, String> hashClient = new HashMap<>();
                 clientsConnectes.put(client.clientToHash(), hashClient);
             }
@@ -66,7 +69,7 @@ public class Serveur {
     public String demanderInformation(Client client, String cle) {
         String result = "";
         HashMap<String, String> hashClient = clientsConnectes.get(client.clientToHash());
-        if (hashClient!=null) {
+        if (hashClient != null) {
             if (hashClient.containsKey(cle)) {
                 result = hashClient.get(cle);
             } else {
@@ -87,7 +90,7 @@ public class Serveur {
     public boolean effacerInformation(Client client, String cle) {
         String resultat = "";
         HashMap<String, String> hashClient = clientsConnectes.get(client.clientToHash());
-        if (hashClient!=null) {
+        if (hashClient != null) {
             hashClient.remove(cle);
         } else {
             throw new BadAuthenticationException("VEUILLEZ VOUS AUTHENTIFIER D'ABORD");
@@ -103,7 +106,7 @@ public class Serveur {
     public boolean exists(Client client, String cle) {
         boolean result = false;
         HashMap<String, String> hashClient = clientsConnectes.get(client.clientToHash());
-        if (hashClient!=null) {
+        if (hashClient != null) {
             if ((clientsConnectes.get(client.clientToHash())).containsKey(cle)) {
                 result = true;
             } else {
@@ -125,22 +128,26 @@ public class Serveur {
      * <cle> <nouvelle valeur> si information incrémentée
      */
     public String incrementerInformation(Client client, String cle) {
-        String result = "";
+        String result;
         if (clientsConnectes.containsKey(client.clientToHash())) {
             HashMap<String, String> hashClient = clientsConnectes.get(client.clientToHash());
             if (hashClient.containsKey(cle)) {
                 try {
-                    int oldValue = Integer.parseInt(hashClient.get(cle));
-                    hashClient.put(cle, String.valueOf(oldValue++));
-                    result = cle + " " + hashClient.get(cle);
+                    Gson gson = new Gson();
+                    Information info = gson.fromJson(hashClient.get(cle), Information.class);
+                    int oldValue = Integer.parseInt(info.getInfo().get(0));
+                    oldValue++;
+                    info.getInfo().set(0, String.valueOf(oldValue));
+                    hashClient.put(cle, gson.toJson(info));
+                    result = gson.toJson(info);
                 } catch (NumberFormatException e) {
-                    result = "IMPOSSIBLE D'INCREMENTER";
+                    throw new IncreaseKeyException("IMPOSSIBLE D'INCREMENTER");
                 }
             } else {
-                result = "AUCUNE INFO POUR CETTE CLE";
+                throw new KeyNotFoundException("AUCUNE INFO POUR CETTE CLE");
             }
         } else {
-            result = "VEUILLEZ VOUS AUTHENTIFIER D'ABORD";
+            throw new BadAuthenticationException("VEUILLEZ VOUS AUTHENTIFIER D'ABORD");
         }
         return result;
     }
@@ -204,7 +211,7 @@ public class Serveur {
     public boolean setInformation(Client client, String cle, String info) {
         boolean result = false;
         HashMap<String, String> hashClient = clientsConnectes.get(client.clientToHash());
-        if (hashClient!=null) {
+        if (hashClient != null) {
             hashClient.put(cle, info);
             result = true;
         } else {

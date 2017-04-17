@@ -4,7 +4,7 @@
 
 
 	/*@Test
-	public void testSetCreation(){
+    public void testSetCreation(){
 
 		assertTrue(this.stocker.stockerInformationParCle("cle", "contenu de 'cle'").getStatusCode().is2xxSuccessful());
     }
