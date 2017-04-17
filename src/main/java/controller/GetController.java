@@ -23,7 +23,6 @@ public class GetController {
     @RequestMapping(value = "/{client}/key/{k}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Basic> getInformationByKey(@PathVariable String client, @PathVariable String k, HttpServletRequest request) {
-
         Client cli = new Client(client, request.getRemoteAddr());
         Gson gson = new Gson();
 
