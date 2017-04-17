@@ -22,6 +22,14 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping(method = RequestMethod.PUT)
 public class PutController {
 
+    /**
+     * Renommer la clé stockée au serveur.
+     * @param client Nom de client avec lequel l'utilisateur s'est connecté
+     * @param renomeCles la clé à renommer
+     * @param request Paramètre interne pour savoir l'origine du messsage
+     * @return la nouvelle clé après changer l'ancienne
+     */
+
     @RequestMapping(value = "/{client}/rename")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Information> renameKey(@PathVariable String client, @RequestBody RenameKey renomeCles, HttpServletRequest request) {
@@ -32,6 +40,14 @@ public class PutController {
         reponseInformation.setStatus(StatusReponse.OK);
         return new ResponseEntity<Information>(reponseInformation, HttpStatus.OK);
     }
+
+    /**
+     * Incrémenter la clé stockée au serveur.
+     * @param client Nom de client avec lequel l'utilisateur s'est connecté
+     * @param iK la clé à incrémenter
+     * @param request Paramètre interne pour savoir l'origine du messsage
+     * @return
+     */
 
     @RequestMapping(value = "/{client}/increase")
     @ResponseStatus(HttpStatus.OK)
@@ -44,6 +60,13 @@ public class PutController {
         return new ResponseEntity<Information>(reponseInformation, HttpStatus.OK);
     }
 
+    /**
+     * Ajouter une liste d'information au serveur.
+     * @param client Nom de client avec lequel l'utilisateur s'est connecté
+     * @param sI information à ajouter dans la liste qui déjà existe
+     * @param request Paramètre interne pour savoir l'origine du messsage
+     * @return
+     */
 
     @RequestMapping(value = "/{client}/addlist")
     @ResponseStatus(HttpStatus.OK)
