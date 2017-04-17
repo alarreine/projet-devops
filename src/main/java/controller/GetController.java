@@ -20,6 +20,14 @@ import javax.servlet.http.HttpServletRequest;
 public class GetController {
 
 
+    /**
+     * Récupérer l'information stockée par la clé .
+     * @param client Nom de client avec lequel l'utilisateur s'est connecté
+     * @param k La clé à saisir dans le stockage
+     * @param request Paramètre interne pour savoir l'origine du messsage
+     * @return une chaine de charactère en indiquant l'information de la clé saisie
+     */
+
     @RequestMapping(value = "/{client}/key/{k}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Basic> getInformationByKey(@PathVariable String client, @PathVariable String k, HttpServletRequest request) {
@@ -32,6 +40,15 @@ public class GetController {
 
         return new ResponseEntity<Basic>(reponseInformation, HttpStatus.OK);
     }
+
+
+    /**
+     * Tester si la clé existe dans le stockage du serveur.
+     * @param client Nom de client avec lequel l'utilisateur s'est connecté
+     * @param k La clé pour tester
+     * @param request Paramètre interne pour savoir l'origine du messsage
+     * @return satatus de réponse OK si la clé exist et status de réponse KEY_NOT_FOUND si non
+     */
 
     @RequestMapping(value = "/{client}/exist/{k}")
     @ResponseStatus(HttpStatus.OK)
