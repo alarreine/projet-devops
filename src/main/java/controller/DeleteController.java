@@ -17,12 +17,18 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping(method = RequestMethod.DELETE)
 public class DeleteController {
 
+    /**
+     * Effacer cle stockée dans la serveur.
+     * @param client Nom de client avec lequel l'utilisateur s'est connecté
+     * @param k La clé pour effacer
+     * @param request 
+     * @return
+     */
     @RequestMapping(value = "/{client}/delete/{k}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Basic> deleteKey(@PathVariable String client, @PathVariable String k, HttpServletRequest request) {
         Client cli = new Client(client, request.getRemoteAddr());
         Application.getServer().effacerInformation(cli, k);
-        Basic reponse = new Basic(StatusReponse.OK);
-        return new ResponseEntity<Basic>(reponse, HttpStatus.OK);
+        return new ResponseEntity<Basic>(new Basic(StatusReponse.OK), HttpStatus.OK);
     }
 }
