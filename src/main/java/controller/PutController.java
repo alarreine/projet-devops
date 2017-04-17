@@ -16,7 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Controlleur pour les méthodes qui font de mise-a-jour des informations stockées
+ * Controlleur pour les méthodes qui font de mise-a-jour des informations stockées.
+ * Dans tous les cas il faul que l'utilisateur soit connecté.
  */
 @RestController
 @RequestMapping(method = RequestMethod.PUT)

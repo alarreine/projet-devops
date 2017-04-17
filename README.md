@@ -16,7 +16,7 @@
 `curl -X POST -H "Content-Type: application/json" -d '{"user":"agustin","password":"123456"}' "localhost:8080/auth"`
 
 * Ajouter information \
-`curl -X POST -H "Content-Type: application/json" -d '{"key":"key","info":{"info":["hola","ciao"]},"ttl":2,"typeEviction":"NOEVICTION"}' "localhost:8080/agus/set"`
+    `curl -X POST -H "Content-Type: application/json" -d '{"key":"key","info":{"info":["hola","ciao"]},"ttl":2,"typeEviction":"NOEVICTION"}' "localhost:8080/agus/set"`
 
 
 ## GET méthods
@@ -31,7 +31,7 @@
 `curl -H "Content-Type: application/json" -X PUT -d '{"key":"1","newKey":"3"}' http://localhost:8080/{nomClient}/increase/`
 
 * Ajouter information dans la list \
-`curl -H "Content-Type: application/json" -X PUT -d '{"key":"1","newKey":"3"}' http://localhost:8080/{nomClient}/addlist/`
+`curl -H "Content-Type: application/json" -X PUT -d '{"key":"key","info":{"info":["hola","ciao"]},"ttl":2,"typeEviction":"NOEVICTION"}' http://localhost:8080/{nomClient}/addlist/`
 
 ## DELETE
 * Supprimer cle \

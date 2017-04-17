@@ -21,8 +21,8 @@ public class DeleteController {
      * Effacer cle stockée dans la serveur.
      * @param client Nom de client avec lequel l'utilisateur s'est connecté
      * @param k La clé pour effacer
-     * @param request 
-     * @return
+     * @param request Paramètre interne pour savoir l'origine de la requête.
+     * @return OK si la suppresssion a été fait.
      */
     @RequestMapping(value = "/{client}/delete/{k}")
     @ResponseStatus(HttpStatus.OK)
