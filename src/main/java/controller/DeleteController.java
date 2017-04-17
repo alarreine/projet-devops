@@ -22,9 +22,9 @@ public class DeleteController {
 
     @RequestMapping(value = "/{client}/delete/{k}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Basic> deleteKey(@PathVariable String client, @RequestBody Delete d, HttpServletRequest request){
+    public ResponseEntity<Basic> deleteKey(@PathVariable String client, @PathVariable String k, HttpServletRequest request){
         Client cli = new Client(client,request.getRemoteAddr());
-        Application.getServer().effacerInformation(cli, d.getKey());
+        Application.getServer().effacerInformation(cli, k);
         Basic reponse = new Basic(StatusReponse.OK);
         return  new ResponseEntity<Basic>(reponse, HttpStatus.OK);
     }
