@@ -28,18 +28,17 @@ public class PutController {
      * @param client Nom de client avec lequel l'utilisateur s'est connecté
      * @param renomeCles la clé à renommer
      * @param request Paramètre interne pour savoir l'origine du messsage
-     * @return la nouvelle clé après changer l'ancienne
+     * @return HttpStatus.OK si la operation a été fait. Sino HttpStatus.NOT_FOUND
      */
 
     @RequestMapping(value = "/{client}/rename")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Information> renameKey(@PathVariable String client, @RequestBody RenameKey renomeCles, HttpServletRequest request) {
+    public ResponseEntity<Basic> renameKey(@PathVariable String client, @RequestBody RenameKey renomeCles, HttpServletRequest request) {
         Client cli = new Client(client, request.getRemoteAddr());
-        String result = Application.getServer().renomeCle(cli, renomeCles.getKey(), renomeCles.getNewKey());
+        Application.getServer().renomeCle(cli, renomeCles.getKey(), renomeCles.getNewKey());
         Gson gson = new Gson();
-        Information reponseInformation = gson.fromJson(result, Information.class);
-        reponseInformation.setStatus(StatusReponse.OK);
-        return new ResponseEntity<Information>(reponseInformation, HttpStatus.OK);
+
+        return new ResponseEntity<Basic>(new Basic(StatusReponse.OK), HttpStatus.OK);
     }
 
     /**

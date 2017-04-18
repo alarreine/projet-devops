@@ -24,14 +24,8 @@ public class Serveur {
     public Serveur() throws NoSuchAlgorithmException, UnsupportedEncodingException {
         clientsConnectes = new HashMap<String, HashMap<String, String>>();
         bdMotDePasse = new HashMap<String, String>();
-//        initialiserBDMotDePasse();
     }
 
-    public void initialiserBDMotDePasse() {
-        // Les adresses IP seront fournies par Agustin
-//        bdMotDePasse.put("127.0.1.0", "1234");
-//        bdMotDePasse.put("127.0.0.0", "AZERTY");
-    }
 
     /************************** Interface du serveur ********************************/
     /*
@@ -181,22 +175,24 @@ public class Serveur {
      * @return "VEUILLEZ VOUS AUTHENTIFIER D'ABORD" si cleint non authentifié
      * "AUCUNE INFO POUR CETTE CLE" si la cle à renommer n'est pas dans la table
      * <nouvelle cle> <information> si renommage réussie
+     * @return true si l'operation a été fait
+     * @exception BadAuthenticationException
      */
-    public String renomeCle(Client client, String cleAvant, String cleApres) {
-        String result = "";
+    public boolean renomeCle(Client client, String cleAvant, String cleApres) {
+
         if (clientsConnectes.containsKey(client.clientToHash())) {
             HashMap<String, String> hashClient = clientsConnectes.get(client.clientToHash());
             if (hashClient.containsKey(cleAvant)) {
                 hashClient.put(cleApres, hashClient.get(cleAvant));
                 hashClient.remove(cleAvant);
-                result = cleApres + " " + hashClient.get(cleApres);
+                return true;
             } else {
-                result = "AUCUNE INFO POUR CETTE CLE";
+                throw new KeyNotFoundException("AUCUNE INFO POUR CETTE CLE");
             }
         } else {
-            result = "VEUILLEZ VOUS AUTHENTIFIER D'ABORD";
+            throw new BadAuthenticationException("VEUILLEZ VOUS AUTHENTIFIER D'ABORD");
         }
-        return result;
+
     }
 
     /*
@@ -205,7 +201,8 @@ public class Serveur {
      * @param client celui qui set une information
      * @param cle de l'information
      * @param info a mettre a la cle indiquée
-     * @return "VEUILLEZ VOUS AUTHENTIFIER D'ABORD" si client non-authentifié
+     * @return true si l'operation a été fait
+     * @exception BadAuthenticationException
      * "<CLE> <INFO>" si set réussi
      */
     public boolean setInformation(Client client, String cle, String info) {
