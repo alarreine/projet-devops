@@ -4,21 +4,23 @@ package bean;
  * Created by alarreine on 12/04/2017.
  */
 public class Client {
-
-    private String nome;
+    private String nom;
     private String ip;
 
     public Client(String nome, String ip) {
-        this.nome = nome;
+        this.nom = nome;
         this.ip = ip;
     }
 
-    public String getNome() {
-        return nome;
+    public Client() {
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public String getNom() {
+        return nom;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
     }
 
     public String getIp() {
@@ -27,5 +29,10 @@ public class Client {
 
     public void setIp(String ip) {
         this.ip = ip;
+    }
+
+    public String clientToHash() {
+
+        return getNom() + "-" + getIp();
     }
 }

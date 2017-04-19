@@ -10,6 +10,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class KeyNotFoundException extends RuntimeException {
 
     public KeyNotFoundException(String key) {
-        super("Il n'exist pas la cle "+key);
+        super("Il n'exist pas la cle " + key);
     }
 }

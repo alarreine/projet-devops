@@ -4,22 +4,38 @@ package bean.requete;
  * Created by alarreine on 11/04/2017.
  */
 
+import bean.reponse.Information;
 import enumerate.TypeEviction;
 
+import java.util.List;
 
-public class RequeteSetInformation {
+
+public class SetInformation {
 
     private String key;
-    private String info;
+    private Information info;
     private Integer ttl;
     private TypeEviction typeEviction;
 
-    public RequeteSetInformation(String key, String info, Integer ttl, TypeEviction typeEviction) {
-
+    public SetInformation(String key, List<String> info, Integer ttl, TypeEviction typeEviction) {
         this.key = key;
-        this.info = info;
+        this.info = new Information();
         this.ttl = ttl;
         this.typeEviction = typeEviction;
+    }
+
+    public SetInformation() {
+
+        ttl = 100;
+        typeEviction = TypeEviction.NOEVICTION;
+
+    }
+
+    public SetInformation(String key, Information info) {
+        this.key = key;
+        this.info = info;
+        ttl = 100;
+        typeEviction = TypeEviction.NOEVICTION;
     }
 
     public String getKey() {
@@ -30,12 +46,16 @@ public class RequeteSetInformation {
         this.key = key;
     }
 
-    public String getInfo() {
+    public Information getInfo() {
         return info;
     }
 
-    public void setInfo(String info) {
+    public void setInfo(Information info) {
         this.info = info;
+    }
+
+    public void addToListInfo(String info) {
+        getInfo().getInfo().add(info);
     }
 
     public Integer getTtl() {
