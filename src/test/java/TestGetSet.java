@@ -1,3 +1,4 @@
+import bean.requete.Auth;
 import bean.requete.SetInformation;
 import enumerate.StatusReponse;
 import junit.framework.TestCase;
@@ -43,10 +44,15 @@ public class TestGetSet extends TestCase{
 
     @Autowired
     private WebApplicationContext wac;
+    private String user;
+    private Auth log;
 
     @Before
     public void setUp() {
+        user = "didesj";
         mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
+        log = new Auth(user,"1234");
+
     }
 
     @Test
@@ -62,7 +68,7 @@ public class TestGetSet extends TestCase{
         String cle = "cle";
 		String valeur = "contenu de 'cle'";
         SetInformation info = new SetInformation(cle,valeur);
-		this.mockMvc.perform(post("/set/{SetInformation}",info))
+		this.mockMvc.perform(post(user+"/set/{SetInformation}",info))
                 .andExpect(status().isAccepted());
     }
 
@@ -72,9 +78,9 @@ public class TestGetSet extends TestCase{
         String cle = "cle";
         String valeur = "contenu de 'cle'";
         SetInformation info = new SetInformation(cle,valeur);
-        this.mockMvc.perform(post("/set/{SetInformation}",info))
+        this.mockMvc.perform(post(user+"/set/{SetInformation}",info))
                 .andExpect(status().isAccepted());
-        this.mockMvc.perform(get("/key/{String}",cle))
+        this.mockMvc.perform(get(user+"/key/{String}",cle))
                 .andExpect(status().isFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.key", is(1)));
@@ -88,11 +94,11 @@ public class TestGetSet extends TestCase{
 		String valeur2 = "nouveau contenu de 'cle'";
         SetInformation info1 = new SetInformation(cle,valeur1);
         SetInformation info2 = new SetInformation(cle,valeur2);
-        this.mockMvc.perform(post("/set/{SetInformation}",info1))
+        this.mockMvc.perform(post(user+"/set/{SetInformation}",info1))
                 .andExpect(status().isAccepted());
-        this.mockMvc.perform(post("/set/{SetInformation}",info2))
+        this.mockMvc.perform(post(user+"/set/{SetInformation}",info2))
                 .andExpect(status().isAccepted());
-        this.mockMvc.perform(get("/key/{String}",cle))
+        this.mockMvc.perform(get(user+"/key/{String}",cle))
                 .andExpect(status().isFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.key", is(1)));
@@ -104,9 +110,9 @@ public class TestGetSet extends TestCase{
 		String cle = "clé 100% spécial !§*$£^ù c'est comme ça ;) \"voilà voilà\"";
 		String valeur = "Le contenu est pas mal non plus \\bonjour\\/\\";
         SetInformation info = new SetInformation(cle,valeur);
-        this.mockMvc.perform(put("/set/{SetInformation}",info))
+        this.mockMvc.perform(put(user+"/set/{SetInformation}",info))
                 .andExpect(status().isAccepted());
-        this.mockMvc.perform(get("/key/{String}",cle))
+        this.mockMvc.perform(get(user+"/key/{String}",cle))
                 .andExpect(status().isFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.key", is(1)));
