@@ -8,6 +8,8 @@ import bean.requete.Increase;
 import bean.requete.RenameKey;
 import bean.requete.SetInformation;
 import com.google.gson.Gson;
+import controller.exception.IncreaseKeyException;
+import controller.exception.KeyNotFoundException;
 import enumerate.StatusReponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,10 +37,15 @@ public class PutController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Basic> renameKey(@PathVariable String client, @RequestBody RenameKey renomeCles, HttpServletRequest request) {
         Client cli = new Client(client, request.getRemoteAddr());
-        Application.getServer().renomeCle(cli, renomeCles.getKey(), renomeCles.getNewKey());
-        Gson gson = new Gson();
+        Basic reponse;
+        try{
+            Application.getServer().renomeCle(cli, renomeCles.getKey(), renomeCles.getNewKey());
+            reponse = new Basic(StatusReponse.OK);
+        }catch (KeyNotFoundException e){
+            reponse = new Basic(StatusReponse.KEY_NOT_FOUND);
+        }
 
-        return new ResponseEntity<Basic>(new Basic(StatusReponse.OK), HttpStatus.OK);
+        return new ResponseEntity<Basic>(reponse, HttpStatus.OK);
     }
 
     /**
@@ -53,10 +60,19 @@ public class PutController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Information> increaseKey(@PathVariable String client, @RequestBody Increase iK, HttpServletRequest request) {
         Client cli = new Client(client, request.getRemoteAddr());
-        String result = Application.getServer().incrementerInformation(cli, iK.getKey());
+
         Gson gson = new Gson();
-        Information reponseInformation = gson.fromJson(result, Information.class);
-        reponseInformation.setStatus(StatusReponse.OK);
+        Information reponseInformation;
+        try{
+            String result = Application.getServer().incrementerInformation(cli, iK.getKey());
+            reponseInformation = gson.fromJson(result, Information.class);
+            reponseInformation.setStatus(StatusReponse.OK);
+        }catch (IncreaseKeyException | KeyNotFoundException e){
+            reponseInformation = new Information();
+            reponseInformation.setStatus(StatusReponse.KEY_FOUND);
+        }
+
+
         return new ResponseEntity<Information>(reponseInformation, HttpStatus.OK);
     }
 

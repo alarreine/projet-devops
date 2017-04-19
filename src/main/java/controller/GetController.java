@@ -5,6 +5,7 @@ import bean.Client;
 import bean.reponse.Basic;
 import bean.reponse.Information;
 import com.google.gson.Gson;
+import controller.exception.KeyNotFoundException;
 import enumerate.StatusReponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,10 +34,17 @@ public class GetController {
     public ResponseEntity<Basic> getInformationByKey(@PathVariable String client, @PathVariable String k, HttpServletRequest request) {
         Client cli = new Client(client, request.getRemoteAddr());
         Gson gson = new Gson();
+        Information reponseInformation;
+        try{
+            String result = Application.getServer().demanderInformation(cli, k);
+            reponseInformation = gson.fromJson(result, Information.class);
+            reponseInformation.setStatus(StatusReponse.OK);
+        }catch (KeyNotFoundException e){
+            reponseInformation = new Information();
+            reponseInformation.setStatus(StatusReponse.KEY_NOT_FOUND);
+        }
 
-        String result = Application.getServer().demanderInformation(cli, k);
-        Information reponseInformation = gson.fromJson(result, Information.class);
-        reponseInformation.setStatus(StatusReponse.OK);
+
 
         return new ResponseEntity<Basic>(reponseInformation, HttpStatus.OK);
     }
@@ -56,8 +64,13 @@ public class GetController {
         Client cli = new Client(client, request.getRemoteAddr());
         Gson gson = new Gson();
 
-        Application.getServer().exists(cli, k);
-        Basic reponse = new Basic(StatusReponse.OK);
+        Basic reponse;
+        try {
+            Application.getServer().exists(cli, k);
+            reponse =new Basic(StatusReponse.KEY_FOUND);
+        }catch (KeyNotFoundException e){
+            reponse =new Basic(StatusReponse.KEY_NOT_FOUND);
+        }
         return new ResponseEntity<Basic>(reponse, HttpStatus.OK);
     }
 }
