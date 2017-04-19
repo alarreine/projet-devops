@@ -1,5 +1,4 @@
-import bean.reponse.ReponseBasic;
-import bean.requete.RequeteSetInformation;
+import bean.requete.SetInformation;
 import enumerate.StatusReponse;
 import junit.framework.TestCase;
 import controller.*;
@@ -33,7 +32,7 @@ import java.util.Arrays;
  * Created by alarreine on 12/04/2017.
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = DemanderControleur.class)
+@SpringBootTest(classes = {GetController.class, PutController.class})
 @WebAppConfiguration
 public class TestGetSet extends TestCase{
 
@@ -62,10 +61,8 @@ public class TestGetSet extends TestCase{
 	public void testSetCreation() throws Exception{
         String cle = "cle";
 		String valeur = "contenu de 'cle'";
-        RequeteSetInformation info = new RequeteSetInformation();
-        info.setKey(cle);
-        info.setInfo(valeur);
-		this.mockMvc.perform(put("/info/{id}",info))
+        SetInformation info = new SetInformation(cle,valeur);
+		this.mockMvc.perform(post("/set/{SetInformation}",info))
                 .andExpect(status().isAccepted());
     }
 
@@ -74,12 +71,10 @@ public class TestGetSet extends TestCase{
 
         String cle = "cle";
         String valeur = "contenu de 'cle'";
-        RequeteSetInformation info = new RequeteSetInformation();
-        info.setKey(cle);
-        info.setInfo(valeur);
-        this.mockMvc.perform(put("/info/{info}",info))
+        SetInformation info = new SetInformation(cle,valeur);
+        this.mockMvc.perform(post("/set/{SetInformation}",info))
                 .andExpect(status().isAccepted());
-        this.mockMvc.perform(get("/key/{id}",cle))
+        this.mockMvc.perform(get("/key/{String}",cle))
                 .andExpect(status().isFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.key", is(1)));
@@ -87,21 +82,17 @@ public class TestGetSet extends TestCase{
 	}
 
 	@Test
-	public void testSetCleExistante(){
+	public void testSetCleExistante() throws Exception{
 		String cle = "cle";
 		String valeur1 = "contenu de 'cle'";
 		String valeur2 = "nouveau contenu de 'cle'";
-        RequeteSetInformation info1 = new RequeteSetInformation();
-        RequeteSetInformation info2 = new RequeteSetInformation();
-        info1.setKey(cle);
-        info2.setKey(cle);
-        info1.setInfo(valeur1);
-        info2.setInfo(valeur2);
-        this.mockMvc.perform(put("/info/{id}",info1))
+        SetInformation info1 = new SetInformation(cle,valeur1);
+        SetInformation info2 = new SetInformation(cle,valeur2);
+        this.mockMvc.perform(post("/set/{SetInformation}",info1))
                 .andExpect(status().isAccepted());
-        this.mockMvc.perform(put("/info/{id}",info2))
+        this.mockMvc.perform(post("/set/{SetInformation}",info2))
                 .andExpect(status().isAccepted());
-        this.mockMvc.perform(get("/key/{id}",cle))
+        this.mockMvc.perform(get("/key/{String}",cle))
                 .andExpect(status().isFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.key", is(1)));
@@ -109,15 +100,13 @@ public class TestGetSet extends TestCase{
 	}
 
 	@Test
-	public void testSetCaractereSpeciaux(){
+	public void testSetCaractereSpeciaux() throws Exception {
 		String cle = "clé 100% spécial !§*$£^ù c'est comme ça ;) \"voilà voilà\"";
 		String valeur = "Le contenu est pas mal non plus \\bonjour\\/\\";
-        RequeteSetInformation info = new RequeteSetInformation();
-        info.setKey(cle);
-        info.setInfo(valeur);
-        this.mockMvc.perform(put("/info/{id}",info))
+        SetInformation info = new SetInformation(cle,valeur);
+        this.mockMvc.perform(put("/set/{SetInformation}",info))
                 .andExpect(status().isAccepted());
-        this.mockMvc.perform(get("/key/{id}",cle))
+        this.mockMvc.perform(get("/key/{String}",cle))
                 .andExpect(status().isFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.key", is(1)));
