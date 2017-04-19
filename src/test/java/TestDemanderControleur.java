@@ -26,7 +26,6 @@ public class TestDemanderControleur extends TestCase {
 
     private MockMvc mockMvc;
 
-    private HttpMessageConverter mappingJackson2HttpMessageConverter;
 
     @Autowired
     private WebApplicationContext wac;
@@ -39,8 +38,8 @@ public class TestDemanderControleur extends TestCase {
     @Test
     public void testGetCleNonExistant() throws Exception {
         String key = "test";
-        mockMvc.perform(get("/key/{id}", key))
-                .andExpect(status().isNotFound());
+        mockMvc.perform(get("user/key/{id}", key))
+                .andExpect(status().isUnauthorized());
 
     }
 

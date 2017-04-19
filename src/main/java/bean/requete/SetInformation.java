@@ -33,11 +33,9 @@ public class SetInformation {
     }
 
     public SetInformation(String key, String info) {
-        List<String> ls = new ArrayList<String>();
-        ls.add(info);
         this.key = key;
         this.info = new Information();
-        this.info.setInfo(ls);
+        this.info.getInfo().add(info);
         ttl = 100;
         typeEviction = TypeEviction.NOEVICTION;
     }
