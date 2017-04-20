@@ -131,7 +131,7 @@ public class Serveur {
                     Gson gson = new Gson();
                     Information info = gson.fromJson(hashClient.get(cle.getKey()), Information.class);
                     int oldValue = Integer.parseInt(info.getInfo().get(0));
-                    oldValue=oldValue+cle.getNumber();
+                    oldValue = oldValue + cle.getNumber();
                     info.getInfo().set(0, String.valueOf(oldValue));
                     hashClient.put(cle.getKey(), gson.toJson(info));
                     result = gson.toJson(info);

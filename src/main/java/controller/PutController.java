@@ -27,9 +27,10 @@ public class PutController {
 
     /**
      * Renommer la clé stockée au serveur.
-     * @param client Nom de client avec lequel l'utilisateur s'est connecté
+     *
+     * @param client     Nom de client avec lequel l'utilisateur s'est connecté
      * @param renomeCles la clé à renommer
-     * @param request Paramètre interne pour savoir l'origine du messsage
+     * @param request    Paramètre interne pour savoir l'origine du messsage
      * @return HttpStatus.OK si la operation a été fait. Sino HttpStatus.NOT_FOUND
      */
 
@@ -38,10 +39,10 @@ public class PutController {
     public ResponseEntity<Basic> renameKey(@PathVariable String client, @RequestBody RenameKey renomeCles, HttpServletRequest request) {
         Client cli = new Client(client, request.getRemoteAddr());
         Basic reponse;
-        try{
+        try {
             Application.getServer().renomeCle(cli, renomeCles.getKey(), renomeCles.getNewKey());
             reponse = new Basic(StatusReponse.OK);
-        }catch (KeyNotFoundException e){
+        } catch (KeyNotFoundException e) {
             reponse = new Basic(StatusReponse.KEY_NOT_FOUND);
         }
 
@@ -50,8 +51,9 @@ public class PutController {
 
     /**
      * Incrémenter la clé stockée au serveur.
-     * @param client Nom de client avec lequel l'utilisateur s'est connecté
-     * @param iK la clé à incrémenter
+     *
+     * @param client  Nom de client avec lequel l'utilisateur s'est connecté
+     * @param iK      la clé à incrémenter
      * @param request Paramètre interne pour savoir l'origine du messsage
      * @return
      */
@@ -63,14 +65,14 @@ public class PutController {
 
         Gson gson = new Gson();
         Information reponseInformation;
-        try{
+        try {
             String result = Application.getServer().incrementerInformation(cli, iK);
             reponseInformation = gson.fromJson(result, Information.class);
             reponseInformation.setStatus(StatusReponse.OK);
-        }catch (IncreaseKeyException e){
+        } catch (IncreaseKeyException e) {
             reponseInformation = new Information();
             reponseInformation.setStatus(StatusReponse.VALUE_NOT_INT);
-        }catch (KeyNotFoundException e){
+        } catch (KeyNotFoundException e) {
             reponseInformation = new Information();
             reponseInformation.setStatus(StatusReponse.KEY_NOT_FOUND);
         }
@@ -81,8 +83,9 @@ public class PutController {
 
     /**
      * Ajouter une liste d'information au serveur.
-     * @param client Nom de client avec lequel l'utilisateur s'est connecté
-     * @param sI information à ajouter dans la liste qui déjà existe
+     *
+     * @param client  Nom de client avec lequel l'utilisateur s'est connecté
+     * @param sI      information à ajouter dans la liste qui déjà existe
      * @param request Paramètre interne pour savoir l'origine du messsage
      * @return
      */

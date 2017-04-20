@@ -31,20 +31,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Created by alarreine on 12/04/2017.
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {GetController.class, PutController.class,PostController.class, Application.class})
+@SpringBootTest(classes = {GetController.class, PutController.class, PostController.class, Application.class})
 @WebAppConfiguration
 public class TestUpDate extends TestCase {
 
 
-    private MockMvc mockMvc;
-
-
-    @Autowired
-    private WebApplicationContext wac;
-
     private static Auth log;
     private static Gson gson;
-
+    private MockMvc mockMvc;
+    @Autowired
+    private WebApplicationContext wac;
     private SetInformation infoInt;
     private SetInformation infoString;
 
@@ -62,8 +58,8 @@ public class TestUpDate extends TestCase {
         cleInfoString = "string";
         valueInt = "4";
         valueString = "bonjour";
-        infoInt = new SetInformation(cleInfoInt,valueInt);
-        infoString = new SetInformation(cleInfoString,valueString);
+        infoInt = new SetInformation(cleInfoInt, valueInt);
+        infoString = new SetInformation(cleInfoString, valueString);
         gson = new Gson();
 
         mockMvc.perform(post("/auth")
@@ -71,49 +67,50 @@ public class TestUpDate extends TestCase {
                 .content(gson.toJson(log)))
                 .andExpect(status().isAccepted());
 
-        mockMvc.perform(post("/{username}/set/",log.getUser())
+        mockMvc.perform(post("/{username}/set/", log.getUser())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(gson.toJson(infoInt)))
                 .andExpect(status().isAccepted())
                 .andExpect(jsonPath("$.status", is("OK")));
 
-        mockMvc.perform(post("/{username}/set/",log.getUser())
+        mockMvc.perform(post("/{username}/set/", log.getUser())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(gson.toJson(infoString)))
                 .andExpect(status().isAccepted())
                 .andExpect(jsonPath("$.status", is("OK")));
     }
+
     @After
     public void afterEnviroment() throws Exception {
-        mockMvc =null;
+        mockMvc = null;
     }
 
 
     @Test
-    public void testRenameKey() throws Exception{
+    public void testRenameKey() throws Exception {
         RenameKey rename1 = new RenameKey(cleInfoString, cleInfoString.concat("Rename"));
         RenameKey rename2 = new RenameKey(cleInfoInt, cleInfoInt.concat("Rename"));
 
-        mockMvc.perform(put("/{username}/rename/",log.getUser())
+        mockMvc.perform(put("/{username}/rename/", log.getUser())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(gson.toJson(rename1)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status", is("OK")));
 
-        mockMvc.perform(get("/{username}/key/{cle}",log.getUser(),rename1.getNewKey()))
+        mockMvc.perform(get("/{username}/key/{cle}", log.getUser(), rename1.getNewKey()))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status", is(StatusReponse.OK.toString())))
                 .andExpect(jsonPath("$.info", hasSize(1)))
                 .andExpect(jsonPath("$.info.[0]", is(valueString)));
 
-        mockMvc.perform(put("/{username}/rename/",log.getUser())
+        mockMvc.perform(put("/{username}/rename/", log.getUser())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(gson.toJson(rename2)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status", is("OK")));
 
-        mockMvc.perform(get("/{username}/key/{cle}",log.getUser(),rename2.getNewKey()))
+        mockMvc.perform(get("/{username}/key/{cle}", log.getUser(), rename2.getNewKey()))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status", is(StatusReponse.OK.toString())))
@@ -122,16 +119,16 @@ public class TestUpDate extends TestCase {
     }
 
     @Test
-    public void testIncreaseOnInt() throws Exception{
+    public void testIncreaseOnInt() throws Exception {
         // "4"+6 = "10"
-        Increase increase = new Increase(cleInfoInt,6);
-        mockMvc.perform(put("/{username}/increase/",log.getUser())
+        Increase increase = new Increase(cleInfoInt, 6);
+        mockMvc.perform(put("/{username}/increase/", log.getUser())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(gson.toJson(increase)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status", is("OK")));
 
-        mockMvc.perform(get("/{username}/key/{cle}",log.getUser(),cleInfoInt))
+        mockMvc.perform(get("/{username}/key/{cle}", log.getUser(), cleInfoInt))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status", is(StatusReponse.OK.toString())))
@@ -140,10 +137,10 @@ public class TestUpDate extends TestCase {
     }
 
     @Test
-    public void testIncreaseOnString() throws Exception{
+    public void testIncreaseOnString() throws Exception {
         // "bonjour" + 6 -> exception
-        Increase increase = new Increase(cleInfoString,6);
-        mockMvc.perform(put("/{username}/increase/",log.getUser())
+        Increase increase = new Increase(cleInfoString, 6);
+        mockMvc.perform(put("/{username}/increase/", log.getUser())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(gson.toJson(increase)))
                 .andExpect(status().isOk())
@@ -152,25 +149,25 @@ public class TestUpDate extends TestCase {
     }
 
     @Test
-    public void testAddToList() throws Exception{
+    public void testAddToList() throws Exception {
         String nextValueInt = "5";
         String nextValueString = "au-revoir";
-        SetInformation infoIntNext = new SetInformation(cleInfoInt,nextValueInt);
-        SetInformation infoStringNext = new SetInformation(cleInfoString,nextValueString);
+        SetInformation infoIntNext = new SetInformation(cleInfoInt, nextValueInt);
+        SetInformation infoStringNext = new SetInformation(cleInfoString, nextValueString);
 
-        mockMvc.perform(put("/{username}/addlist/",log.getUser())
+        mockMvc.perform(put("/{username}/addlist/", log.getUser())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(gson.toJson(infoIntNext)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status", is("OK")));
 
-        mockMvc.perform(put("/{username}/addlist/",log.getUser())
+        mockMvc.perform(put("/{username}/addlist/", log.getUser())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(gson.toJson(infoStringNext)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status", is("OK")));
 
-        mockMvc.perform(get("/{username}/key/{cle}",log.getUser(),cleInfoInt))
+        mockMvc.perform(get("/{username}/key/{cle}", log.getUser(), cleInfoInt))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status", is(StatusReponse.OK.toString())))
@@ -178,14 +175,13 @@ public class TestUpDate extends TestCase {
                 .andExpect(jsonPath("$.info.[0]", is(valueInt)))
                 .andExpect(jsonPath("$.info.[1]", is(nextValueInt)));
 
-        mockMvc.perform(get("/{username}/key/{cle}",log.getUser(),cleInfoString))
+        mockMvc.perform(get("/{username}/key/{cle}", log.getUser(), cleInfoString))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status", is(StatusReponse.OK.toString())))
                 .andExpect(jsonPath("$.info", hasSize(2)))
                 .andExpect(jsonPath("$.info.[0]", is(valueString)))
                 .andExpect(jsonPath("$.info.[1]", is(nextValueString)));
-
 
 
     }

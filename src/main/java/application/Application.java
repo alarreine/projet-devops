@@ -18,7 +18,7 @@ import java.security.NoSuchAlgorithmException;
 public class Application {
 
     private static Serveur server;
-    private static String password="123456";
+    private static String password = "123456";
 
     public Application() throws UnsupportedEncodingException, NoSuchAlgorithmException {
 
