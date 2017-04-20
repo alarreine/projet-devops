@@ -1,41 +1,35 @@
+import application.Application;
 import bean.requete.Auth;
 import bean.requete.SetInformation;
 import com.google.gson.Gson;
+import controller.GetController;
+import controller.PostController;
 import enumerate.StatusReponse;
 import junit.framework.TestCase;
-import controller.*;
-
+import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestContext;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.util.Arrays;
-
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import java.util.Arrays;
 
 /**
  * Created by alarreine on 12/04/2017.
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {GetController.class, PutController.class, PostController.class})
+@SpringBootTest(classes = {GetController.class, PostController.class, Application.class})
 @WebAppConfiguration
 public class TestGetSet extends TestCase{
 
@@ -50,46 +44,48 @@ public class TestGetSet extends TestCase{
     private static Auth log;
     private static Gson gson;
 
+    /**
+     * Il faut se connecter avant de faire un requête avec /auth
+     * @throws Exception
+     */
     @Before
-    public void setUpEnviroment() {
+    public void setUpEnviroment() throws Exception {
         mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
         log = new Auth("didesj","123456");
         gson = new Gson();
 
-    }
-
-    /**
-     * Avant de chaque test il faut se connecter au service
-     * @throws Exception
-     */
-    @Test
-    public void logInServiceSuccesful() throws Exception{
-
-
-        this.mockMvc.perform(post("/auth")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
+        mockMvc.perform(post("/auth")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content(gson.toJson(log)))
                 .andExpect(status().isAccepted());
 
     }
 
+    @After
+    public void afterEnviroment() throws Exception {
+        mockMvc =null;
+    }
+
     @Test
     public void testGetCleInexistante() throws Exception{
-        String cle="cle";
-        this.mockMvc.perform(get(log.getUser()+"/key/{k}", cle))
-                .andExpect(status().isNotFound());
+        String cle = "cle";
+        this.mockMvc.perform(get( "/{username}/key/{cle}", log.getUser(),cle))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status", is(StatusReponse.KEY_NOT_FOUND.toString())));
     }
 
 
 	@Test
 	public void testSetCreation() throws Exception{
         String cle = "cle";
-		String valeur = "contenu de cle'";
-        SetInformation info = new SetInformation(cle,valeur);
-		this.mockMvc.perform(post(log.getUser()+"/set")
+        String valeur = "contenu de cle'";
+        SetInformation info = new SetInformation(cle, valeur);
+        String url = "/" + log.getUser() + "/set";
+        this.mockMvc.perform(post(url)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(gson.toJson(info)))
-                .andExpect(status().isAccepted());
+                .andExpect(status().isAccepted())
+                .andExpect(jsonPath("$.status", is("OK")));
     }
 
 	@Test
@@ -98,48 +94,38 @@ public class TestGetSet extends TestCase{
         String cle = "cle";
         String valeur = "contenu de cle'";
         SetInformation info = new SetInformation(cle,valeur);
-        this.mockMvc.perform(post(log.getUser()+"/set")
+        this.mockMvc.perform(post("/{username}/set",log.getUser())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(gson.toJson(info)))
                 .andExpect(status().isAccepted());
 
-        this.mockMvc.perform(get(log.getUser()+"/key/{k}",cle))
-                .andExpect(status().isFound())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].info", is(1)));
+        this.mockMvc.perform(get("/{username}/key/{cle}",log.getUser(),cle))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status", is(StatusReponse.OK.toString())))
+                .andExpect(jsonPath("$.info", hasSize(1)))
+                .andExpect(jsonPath("$.info.[0]", is(valeur)));
 	}
 
-//	@Test
-//	public void testSetCleExistante() throws Exception{
-//		String cle = "cle";
-//		String valeur1 = "contenu de 'cle'";
-//		String valeur2 = "nouveau contenu de 'cle'";
-//        SetInformation info1 = new SetInformation(cle,valeur1);
-//        SetInformation info2 = new SetInformation(cle,valeur2);
-//        this.mockMvc.perform(post(user+"/set/{SetInformation}",info1))
-//                .andExpect(status().isAccepted());
-//        this.mockMvc.perform(post(user+"/set/{SetInformation}",info2))
-//                .andExpect(status().isAccepted());
-//        this.mockMvc.perform(get(user+"/key/{String}",cle))
-//                .andExpect(status().isFound())
-//                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-//                .andExpect(jsonPath("$.key", is(1)));
-//        verify(valeur2);
-//	}
-//
-//	@Test
-//	public void testSetCaractereSpeciaux() throws Exception {
-//		String cle = "clé 100% spécial !§*$£^ù c'est comme ça ;) \"voilà voilà\"";
-//		String valeur = "Le contenu est pas mal non plus \\bonjour\\/\\";
-//        SetInformation info = new SetInformation(cle,valeur);
-//        this.mockMvc.perform(put(user+"/set/{SetInformation}",info))
-//                .andExpect(status().isAccepted());
-//        this.mockMvc.perform(get(user+"/key/{String}",cle))
-//                .andExpect(status().isFound())
-//                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-//                .andExpect(jsonPath("$.key", is(1)));
-//        verify(valeur);
-//	}
+	@Test
+	public void testSetCaractereSpeciaux() throws Exception {
+		String cle = "cles sans caracters speciaux";
+		String valeur = "Le contenu est pas mal non plus \\bonjour\\/\\ !§*$£^ù c'est comme ça ;) \"voilà voilà\"";
+        SetInformation info = new SetInformation(cle,valeur);
+
+        this.mockMvc.perform(post("/{username}/set",log.getUser())
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(gson.toJson(info)))
+                .andExpect(status().isAccepted())
+                .andExpect(jsonPath("$.status", is("OK")));
+
+        this.mockMvc.perform(get("/{username}/key/{cle}",log.getUser(),cle))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status", is(StatusReponse.OK.toString())))
+                .andExpect(jsonPath("$.info", hasSize(1)))
+                .andExpect(jsonPath("$.info.[0]", is(valeur)));
+
+	}
 
 }

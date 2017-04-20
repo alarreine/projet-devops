@@ -4,6 +4,7 @@ import application.Application;
 import bean.Client;
 import bean.reponse.Information;
 import bean.requete.Auth;
+import bean.requete.Increase;
 import com.google.gson.Gson;
 import controller.exception.BadAuthenticationException;
 import controller.exception.IncreaseKeyException;
@@ -121,18 +122,18 @@ public class Serveur {
      * "IMPOSSIBLE D'INCREMENTER" si la valeur à cette clé n'est pas un entier
      * <cle> <nouvelle valeur> si information incrémentée
      */
-    public String incrementerInformation(Client client, String cle) {
+    public String incrementerInformation(Client client, Increase cle) {
         String result;
         if (clientsConnectes.containsKey(client.clientToHash())) {
             HashMap<String, String> hashClient = clientsConnectes.get(client.clientToHash());
-            if (hashClient.containsKey(cle)) {
+            if (hashClient.containsKey(cle.getKey())) {
                 try {
                     Gson gson = new Gson();
-                    Information info = gson.fromJson(hashClient.get(cle), Information.class);
+                    Information info = gson.fromJson(hashClient.get(cle.getKey()), Information.class);
                     int oldValue = Integer.parseInt(info.getInfo().get(0));
-                    oldValue++;
+                    oldValue=oldValue+cle.getNumber();
                     info.getInfo().set(0, String.valueOf(oldValue));
-                    hashClient.put(cle, gson.toJson(info));
+                    hashClient.put(cle.getKey(), gson.toJson(info));
                     result = gson.toJson(info);
                 } catch (NumberFormatException e) {
                     throw new IncreaseKeyException("IMPOSSIBLE D'INCREMENTER");

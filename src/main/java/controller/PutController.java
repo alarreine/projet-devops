@@ -64,12 +64,15 @@ public class PutController {
         Gson gson = new Gson();
         Information reponseInformation;
         try{
-            String result = Application.getServer().incrementerInformation(cli, iK.getKey());
+            String result = Application.getServer().incrementerInformation(cli, iK);
             reponseInformation = gson.fromJson(result, Information.class);
             reponseInformation.setStatus(StatusReponse.OK);
-        }catch (IncreaseKeyException | KeyNotFoundException e){
+        }catch (IncreaseKeyException e){
             reponseInformation = new Information();
-            reponseInformation.setStatus(StatusReponse.KEY_FOUND);
+            reponseInformation.setStatus(StatusReponse.VALUE_NOT_INT);
+        }catch (KeyNotFoundException e){
+            reponseInformation = new Information();
+            reponseInformation.setStatus(StatusReponse.KEY_NOT_FOUND);
         }
 
 

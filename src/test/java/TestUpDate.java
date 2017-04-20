@@ -1,41 +1,37 @@
+import application.Application;
 import bean.requete.Auth;
 import bean.requete.Increase;
 import bean.requete.RenameKey;
 import bean.requete.SetInformation;
+import com.google.gson.Gson;
+import controller.GetController;
+import controller.PostController;
+import controller.PutController;
 import enumerate.StatusReponse;
 import junit.framework.TestCase;
-import controller.*;
-
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestContext;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.util.Arrays;
-
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.*;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import java.util.Arrays;
 
 /**
  * Created by alarreine on 12/04/2017.
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {GetController.class, PutController.class})
+@SpringBootTest(classes = {GetController.class, PutController.class,PostController.class, Application.class})
 @WebAppConfiguration
 public class TestUpDate extends TestCase {
 
@@ -45,8 +41,9 @@ public class TestUpDate extends TestCase {
 
     @Autowired
     private WebApplicationContext wac;
-    private String user;
-    private Auth log;
+
+    private static Auth log;
+    private static Gson gson;
 
     private SetInformation infoInt;
     private SetInformation infoString;
@@ -58,9 +55,8 @@ public class TestUpDate extends TestCase {
 
     @Before
     public void setUp() throws Exception {
-        user = "didesj";
         mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
-        log = new Auth(user, "1234");
+        log = new Auth("didesj", "123456");
 
         cleInfoInt = "int";
         cleInfoString = "string";
@@ -68,51 +64,91 @@ public class TestUpDate extends TestCase {
         valueString = "bonjour";
         infoInt = new SetInformation(cleInfoInt,valueInt);
         infoString = new SetInformation(cleInfoString,valueString);
-        this.mockMvc.perform(post (user+"/set/{SetInformation}",infoInt))
+        gson = new Gson();
+
+        mockMvc.perform(post("/auth")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(gson.toJson(log)))
                 .andExpect(status().isAccepted());
-        this.mockMvc.perform(post (user+"/set/{SetInformation}",infoString))
-                .andExpect(status().isAccepted());
+
+        mockMvc.perform(post("/{username}/set/",log.getUser())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(gson.toJson(infoInt)))
+                .andExpect(status().isAccepted())
+                .andExpect(jsonPath("$.status", is("OK")));
+
+        mockMvc.perform(post("/{username}/set/",log.getUser())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(gson.toJson(infoString)))
+                .andExpect(status().isAccepted())
+                .andExpect(jsonPath("$.status", is("OK")));
     }
+    @After
+    public void afterEnviroment() throws Exception {
+        mockMvc =null;
+    }
+
 
     @Test
     public void testRenameKey() throws Exception{
-        RenameKey rename1 = new RenameKey(cleInfoString, cleInfoString + "Rename");
-        RenameKey rename2 = new RenameKey(cleInfoInt, cleInfoInt + "Rename");
-        this.mockMvc.perform(put(user+"/rename/{RenameKey}",rename1))
-                .andExpect(status().isAccepted());
-        this.mockMvc.perform(get (user+"/key/{String}",cleInfoInt + "Rename"))
-                .andExpect(status().isFound())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-                .andExpect(jsonPath("$.key", is(1)));
-        verify(valueInt);
-        this.mockMvc.perform(put(user+"/rename/{RenameKey}",rename2))
-                .andExpect(status().isAccepted());
-        this.mockMvc.perform(get (user+"/key/{String}",cleInfoString + "Rename"))
-                .andExpect(status().isFound())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-                .andExpect(jsonPath("$.key", is(1)));
-        verify(valueString);
+        RenameKey rename1 = new RenameKey(cleInfoString, cleInfoString.concat("Rename"));
+        RenameKey rename2 = new RenameKey(cleInfoInt, cleInfoInt.concat("Rename"));
+
+        mockMvc.perform(put("/{username}/rename/",log.getUser())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(gson.toJson(rename1)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status", is("OK")));
+
+        mockMvc.perform(get("/{username}/key/{cle}",log.getUser(),rename1.getNewKey()))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status", is(StatusReponse.OK.toString())))
+                .andExpect(jsonPath("$.info", hasSize(1)))
+                .andExpect(jsonPath("$.info.[0]", is(valueString)));
+
+        mockMvc.perform(put("/{username}/rename/",log.getUser())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(gson.toJson(rename2)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status", is("OK")));
+
+        mockMvc.perform(get("/{username}/key/{cle}",log.getUser(),rename2.getNewKey()))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status", is(StatusReponse.OK.toString())))
+                .andExpect(jsonPath("$.info", hasSize(1)))
+                .andExpect(jsonPath("$.info.[0]", is(valueInt)));
     }
 
     @Test
     public void testIncreaseOnInt() throws Exception{
         // "4"+6 = "10"
         Increase increase = new Increase(cleInfoInt,6);
-        this.mockMvc.perform(put(user+"/increase/{Increase}", increase))
-                .andExpect(status().isAccepted());
-        this.mockMvc.perform(get (user+"/key/{String}",cleInfoInt))
-                .andExpect(status().isFound())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-                .andExpect(jsonPath("$.key", is(1)));
-        verify(10);
+        mockMvc.perform(put("/{username}/increase/",log.getUser())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(gson.toJson(increase)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status", is("OK")));
+
+        mockMvc.perform(get("/{username}/key/{cle}",log.getUser(),cleInfoInt))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status", is(StatusReponse.OK.toString())))
+                .andExpect(jsonPath("$.info", hasSize(1)))
+                .andExpect(jsonPath("$.info.[0]", is("10")));
     }
 
     @Test
     public void testIncreaseOnString() throws Exception{
         // "bonjour" + 6 -> exception
         Increase increase = new Increase(cleInfoString,6);
-        this.mockMvc.perform(put(user+"/increase/{Increase}", increase))
-                .andExpect(status().isNotAcceptable());
+        mockMvc.perform(put("/{username}/increase/",log.getUser())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(gson.toJson(increase)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status", is(StatusReponse.VALUE_NOT_INT.toString())));
+
     }
 
     @Test
@@ -120,12 +156,37 @@ public class TestUpDate extends TestCase {
         String nextValueInt = "5";
         String nextValueString = "au-revoir";
         SetInformation infoIntNext = new SetInformation(cleInfoInt,nextValueInt);
-        SetInformation infoStringNext = new SetInformation(cleInfoInt,nextValueString);
-        this.mockMvc.perform(put(user+"/addlist/{SetInformation}",infoIntNext))
-                .andExpect(status().isAccepted());
-        // à finir
-//        this.mockMvc.perform(put(user+"/addlist/{SetInformation}",infoStringNext))
-//                .andExpect(status().isAccepted());
-//        this.mockMvc.perform(get())
+        SetInformation infoStringNext = new SetInformation(cleInfoString,nextValueString);
+
+        mockMvc.perform(put("/{username}/addlist/",log.getUser())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(gson.toJson(infoIntNext)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status", is("OK")));
+
+        mockMvc.perform(put("/{username}/addlist/",log.getUser())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(gson.toJson(infoStringNext)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status", is("OK")));
+
+        mockMvc.perform(get("/{username}/key/{cle}",log.getUser(),cleInfoInt))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status", is(StatusReponse.OK.toString())))
+                .andExpect(jsonPath("$.info", hasSize(2)))
+                .andExpect(jsonPath("$.info.[0]", is(valueInt)))
+                .andExpect(jsonPath("$.info.[1]", is(nextValueInt)));
+
+        mockMvc.perform(get("/{username}/key/{cle}",log.getUser(),cleInfoString))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status", is(StatusReponse.OK.toString())))
+                .andExpect(jsonPath("$.info", hasSize(2)))
+                .andExpect(jsonPath("$.info.[0]", is(valueString)))
+                .andExpect(jsonPath("$.info.[1]", is(nextValueString)));
+
+
+
     }
 }
