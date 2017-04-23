@@ -1,15 +1,3 @@
----
-output:
-  md_document:
-    toc: true
-    variant: markdown_github
-geometry:
-    top: 1.5cm
-    bottom: 1.5cm
-    left: 2cm
-    right: 1cm
----
-
 Projet DevOps RED2
 ---
 
