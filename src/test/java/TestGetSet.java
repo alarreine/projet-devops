@@ -105,9 +105,30 @@ public class TestGetSet extends TestCase {
     }
 
     @Test
-    public void testSetCaractereSpeciaux() throws Exception {
+    public void testSetValeurCaractereSpeciaux() throws Exception {
         String cle = "cles sans caracters speciaux";
         String valeur = "Le contenu est pas mal non plus \\bonjour\\/\\ !§*$£^ù c'est comme ça ;) \"voilà voilà\"";
+        SetInformation info = new SetInformation(cle, valeur);
+
+        this.mockMvc.perform(post("/{username}/set", log.getUser())
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(gson.toJson(info)))
+                .andExpect(status().isAccepted())
+                .andExpect(jsonPath("$.status", is("OK")));
+
+        this.mockMvc.perform(get("/{username}/key/{cle}", log.getUser(), cle))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status", is(StatusReponse.OK.toString())))
+                .andExpect(jsonPath("$.info", hasSize(1)))
+                .andExpect(jsonPath("$.info.[0]", is(valeur)));
+
+    }
+
+    @Test
+    public void testSetCleCaractereSpeciaux() throws Exception {
+        String cle = "clés sans caracters speciaux !§*$£^ù";
+        String valeur = "contenu";
         SetInformation info = new SetInformation(cle, valeur);
 
         this.mockMvc.perform(post("/{username}/set", log.getUser())
