@@ -16,9 +16,9 @@ Dans tous le cas, si la clé n'est pas trouvé HTTPCODE est 200 mais le status e
 ### POST
 
 * Authentifier\
-Requête d'authentification avec un mot de passe. Red2 demande un mot-de-passe avant de exécuter d'autres requêtes. Le mot de passe utilisé est passé en argument d'initialisation du logiciel. Sino par défaut c'est "123456".
+Requête d'authentification avec un mot de passe. Red2 demande un mot-de-passe avant de exécuter d'autres requêtes. Le mot de passe utilisé est passé en argument d'initialisation du logiciel. Sinon par défaut c'est "123456".
 Si le mot de passe est correct, le service reponds ACCEPTED.
-Example: 
+Exemple: 
 
 ```x-sh
 curl -X POST -H "Content-Type: application/json" \
@@ -27,7 +27,7 @@ curl -X POST -H "Content-Type: application/json" \
 
 * Ajouter un valeur\
 La clé pour garder la valeur. Si la clé tient déjà une valeur, il est écrasé, indépendamment de son type.
-Example:
+Exemple:
 ```x-sh
 curl -X POST -H "Content-Type: application/json" \ 
 -d '{"key":"key","info":{"info":["hola","ciao"]},"ttl":2,"typeEviction":"NOEVICTION"}' \ 
@@ -37,7 +37,7 @@ curl -X POST -H "Content-Type: application/json" \
 ### GET 
 * Demmander la valeur stockée par clé \
 Obtenir la valeur de la clé. Si la clé n'existe pas on renvoie le status KEY_NOT_FOUND.
-Example:
+Exemple:
 ```x-sh
 curl -i -H "Accept: application/json" -H "Content-Type: application/json" \
 -X GET http://localhost:8080/agustin/key/{key}
@@ -46,14 +46,14 @@ curl -i -H "Accept: application/json" -H "Content-Type: application/json" \
 ### PUT méthods
 * Renomer la clé \
 Renomer une clé1 par une autre clé2. Si la clé n'existe pas on renvoie le status KEY_NOT_FOUND, sinon OK.
-Example:
+Exemple:
 ```x-sh
 curl -H "Content-Type: application/json" -X PUT -d '{"key":"1","newKey":"3"}' \ 
 http://localhost:8080/agustin/rename/
 ```
 
 * Augmenter la valeur \
-Si la clé est un entier on additionne le nombre passé comme paramètre. Si elle n'est pas de type integer, on renvoie le status VALUE_NOT_INT.
+Si la valeur contenue à la clé est un entier on additionne le nombre passé comme paramètre. Si elle n'est pas de type integer, on renvoie le status VALUE_NOT_INT.
 Example: 
 ```x-sh
 curl -H "Content-Type: application/json" -X PUT -d '{"key":"1","number":"3"}' \
@@ -62,7 +62,7 @@ http://localhost:8080/{nomClient}/increase/
 
 * Ajouter dans la list \
 Ajouter une valeur dans la liste. On renvoie status OK. 
-Example:
+Exemple:
 ```x-sh
 curl -H "Content-Type: application/json" -X PUT \
 -d '{"key":"key","info":{"info":["hola","ciao"]},"ttl":2,"typeEviction":"NOEVICTION"}' \
@@ -72,7 +72,7 @@ http://localhost:8080/{nomClient}/addlist/
 ### DELETE
 * Supprimer cle \
 Supprimer une valeur par clé. On renvoie status OK. 
-Example:
+Exemple:
 ```x-sh
 curl -v -X DELETE http://localhost:8080/{nomClient}/delete/{key}
 ```
