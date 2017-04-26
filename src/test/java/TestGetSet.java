@@ -33,7 +33,7 @@ import java.util.Arrays;
  * Created by alarreine on 12/04/2017.
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {GetController.class, PutController.class})
+@SpringBootTest(classes = {GetController.class, PostController.class})
 @WebAppConfiguration
 public class TestGetSet extends TestCase{
 
