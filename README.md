@@ -7,11 +7,12 @@ On a créé un système de gestion de dictionnaire distant clef-valeur scalable,
 RED2 permet de manipuler des types de données simples: chaînes de caractères et listes.
 
 RED2 expose un service REST pour faire des requêtes. Les requêtes posibles sont selon les standard GET, POST, PUT, DELETE.
+
+   Dans tous les cas, il faut s'authentifier sinon le HTTPCODE reponse est 401 UNAUTHORIZED.
+   Dans tous le cas, si la clé n'est pas trouvé HTTPCODE est 200 mais le status est KEY_NOT_FOUND {"status":"KEY_NOT_FOUND"}
+   La clé utilisée ne doit pas avoir de caractères spéciaux. 
    
 Les fonctionalités implementées sont:
-
-Dans tous les cas, il faut s'authentifier sinon le HTTPCODE reponse est 401 UNAUTHORIZED.
-Dans tous le cas, si la clé n'est pas trouvé HTTPCODE est 200 mais le status est KEY_NOT_FOUND {"status":"KEY_NOT_FOUND"}
 
 ### POST
 
