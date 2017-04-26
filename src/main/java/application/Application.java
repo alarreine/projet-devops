@@ -18,17 +18,20 @@ import java.security.NoSuchAlgorithmException;
 public class Application {
 
     private static Serveur server;
-    private static String password;
+    private static String password = "123456";
+
+    public Application() throws UnsupportedEncodingException, NoSuchAlgorithmException {
+
+        server = new Serveur();
+    }
 
     public static void main(String[] args) {
 
         if (args.length != 0) {
             password = args[0];
-        } else {
-            password = "123456";
         }
         try {
-            server = new Serveur();
+            Application app = new Application();
             SpringApplication.run(Application.class, args);
         } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
 

@@ -22,9 +22,10 @@ import javax.servlet.http.HttpServletRequest;
 public class PostController {
     /**
      * Stocker une information par une clé donnée pour l'utilisateur.
-     * @param client Nom client avec lequel l'utilisateur s'est connecté
+     *
+     * @param client         Nom client avec lequel l'utilisateur s'est connecté
      * @param setInformation Information pour stocker
-     * @param request Paramètre interne pour savoir l'origin du message
+     * @param request        Paramètre interne pour savoir l'origin du message
      * @return ACCEPTED si l'insertion a été fait.
      */
     @RequestMapping("/{client}/set")
@@ -42,9 +43,11 @@ public class PostController {
 
         return new ResponseEntity<Basic>(new Basic(StatusReponse.OK), HttpStatus.ACCEPTED);
     }
+
     /**
      * Autoriser la conexion d'un utilisateur.
-     * @param client Nom client avec lequel l'utilisateur va se connecter
+     *
+     * @param client  Nom client avec lequel l'utilisateur va se connecter
      * @param request Paramètre interne pour savoir l'origin du message
      * @return ACCEPTED si la connexion a été bien etablie. Sino UNAUTHORIZED
      */
