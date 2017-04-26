@@ -23,7 +23,7 @@ Exemple:
 
 ```x-sh
 curl -X POST -H "Content-Type: application/json" \
--d '{"user":"agustin","password":"123456"}' "localhost:8080/auth"
+-d '{"user":"{nomClient}","password":"123456"}' "localhost:8080/auth"
 ```
 
 * Ajouter un valeur\
@@ -32,7 +32,7 @@ Exemple:
 ```x-sh
 curl -X POST -H "Content-Type: application/json" \ 
 -d '{"key":"key","info":{"info":["hola","ciao"]},"ttl":2,"typeEviction":"NOEVICTION"}' \ 
-"localhost:8080/agustin/set"
+"localhost:8080/{nomClient}/set"
 ```
 
 ### GET 
@@ -41,7 +41,7 @@ Obtenir la valeur de la clé. Si la clé n'existe pas on renvoie le status KEY_N
 Exemple:
 ```x-sh
 curl -i -H "Accept: application/json" -H "Content-Type: application/json" \
--X GET http://localhost:8080/agustin/key/{key}
+-X GET http://localhost:8080/{nomClient}/key/{key}
 ```
 
 ### PUT méthods
@@ -50,7 +50,7 @@ Renomer une clé1 par une autre clé2. Si la clé n'existe pas on renvoie le sta
 Exemple:
 ```x-sh
 curl -H "Content-Type: application/json" -X PUT -d '{"key":"1","newKey":"3"}' \ 
-http://localhost:8080/agustin/rename/
+http://localhost:8080/{nomClient}/rename/
 ```
 
 * Augmenter la valeur \
@@ -115,7 +115,7 @@ newKey: nouvelle cle
 user: utilisateur
 password: mot-de-passe
 ```javascript
-{"user":"agustin","password":"123456"}
+{"user":"{nomClient}","password":"123456"}
 ```
 ## Manual Développeur
 
