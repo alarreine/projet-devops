@@ -74,4 +74,17 @@ public class GetController {
         }
         return new ResponseEntity<Basic>(reponse, HttpStatus.OK);
     }
+
+    @RequestMapping(value = "/{client}/quit/")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<Basic> quit(@PathVariable String client, HttpServletRequest request) {
+        Client cli = new Client(client, request.getRemoteAddr());
+        Gson gson = new Gson();
+
+        Basic reponse;
+
+        Application.getServer().quitter(cli);
+        reponse = new Basic(StatusReponse.OK);
+        return new ResponseEntity<Basic>(reponse, HttpStatus.OK);
+    }
 }

@@ -7,6 +7,7 @@ import controller.PostController;
 import enumerate.StatusReponse;
 import junit.framework.TestCase;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,7 +49,7 @@ public class TestGetSet extends TestCase {
     @Before
     public void setUpEnviroment() throws Exception {
         mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
-        log = new Auth("didesj", "123456");
+        log = new Auth("didesj1", "123456");
         gson = new Gson();
 
         mockMvc.perform(post("/auth")
@@ -141,5 +142,6 @@ public class TestGetSet extends TestCase {
                 .andExpect(jsonPath("$.status", is(StatusReponse.KEY_NOT_FOUND.toString())));
 
     }
+
 
 }

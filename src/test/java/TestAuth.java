@@ -113,4 +113,11 @@ public class TestAuth extends TestCase {
 
     }
 
+    @Test
+    public void testQuitSansAuth() throws Exception {
+        this.mockMvc.perform(get("/{username}/quit/", log.getUser()))
+                .andExpect(status().isUnauthorized());
+
+    }
+
 }
