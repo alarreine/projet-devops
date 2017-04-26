@@ -66,7 +66,7 @@ public class TestGetSet extends TestCase {
     @Test
     public void testGetCleInexistante() throws Exception {
         String cle = "cle";
-        this.mockMvc.perform(get("/{username}/key/{cle}", log.getUser(), cle))
+        this.mockMvc.perform(get("/{username}/exist/{cle}", log.getUser(), cle))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status", is(StatusReponse.KEY_NOT_FOUND.toString())));
     }
@@ -96,12 +96,10 @@ public class TestGetSet extends TestCase {
                 .content(gson.toJson(info)))
                 .andExpect(status().isAccepted());
 
-        this.mockMvc.perform(get("/{username}/key/{cle}", log.getUser(), cle))
+        this.mockMvc.perform(get("/{username}/exist/{cle}", log.getUser(), cle))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status", is(StatusReponse.OK.toString())))
-                .andExpect(jsonPath("$.info", hasSize(1)))
-                .andExpect(jsonPath("$.info.[0]", is(valeur)));
+                .andExpect(jsonPath("$.status", is(StatusReponse.KEY_FOUND.toString())));
     }
 
     @Test
@@ -140,9 +138,7 @@ public class TestGetSet extends TestCase {
         this.mockMvc.perform(get("/{username}/key/{cle}", log.getUser(), cle))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status", is(StatusReponse.OK.toString())))
-                .andExpect(jsonPath("$.info", hasSize(1)))
-                .andExpect(jsonPath("$.info.[0]", is(valeur)));
+                .andExpect(jsonPath("$.status", is(StatusReponse.KEY_NOT_FOUND.toString())));
 
     }
 

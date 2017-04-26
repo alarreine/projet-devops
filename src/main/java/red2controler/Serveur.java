@@ -48,7 +48,7 @@ public class Serveur {
             }
 
         } else {
-            throw new BadAuthenticationException();
+            throw new BadAuthenticationException("MAUVAIS MOT DE PASSE");
         }
 
         return true;
@@ -107,8 +107,8 @@ public class Serveur {
             } else {
                 throw new KeyNotFoundException(cle);
             }
-
-
+        }else{
+            throw new BadAuthenticationException("VEUILLEZ VOUS AUTHENTIFIER D'ABORD");
         }
         return result;
     }
