@@ -126,7 +126,7 @@ mvn install
 ### Pour Demarrer de l'application
 Le fichier executable se trouve dans le dossier _target_
 ```x-sh
-jar -tar red-two-service-1.0.jar
+java -jar red-two-service-1.0.jar
 ```
 ### Pour lancer l'application directement dépuis maven
 ```x-sh
