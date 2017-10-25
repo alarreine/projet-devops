@@ -143,5 +143,3 @@ le paremétre -p
 ```x-sh
 docker run -p 8080:8080 alarreine/red2:v1
 ```
-
-Merci
